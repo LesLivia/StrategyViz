@@ -1,4 +1,4 @@
-from it.polimi.strategyviz.logging.logger import Logger
+from it.polimi.strategyviz.viz_logging.logger import Logger
 from it.polimi.strategyviz.strategy2pta.converter import convert
 
 LOGGER = Logger('MAIN')
