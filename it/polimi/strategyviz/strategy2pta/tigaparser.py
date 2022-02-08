@@ -1,6 +1,6 @@
 from typing import List
-
-from it.polimi.strategyviz.strategy2pta.pta import PTA, Location, State, StateVariable, ExtLocation
+from tqdm import tqdm
+from it.polimi.strategyviz.strategy2pta.pta import PTA, Location, State, StateVariable, ExtLocation, Edge
 from it.polimi.strategyviz.viz_logging.logger import Logger
 
 LOGGER = Logger('TIGA PARSER')
@@ -155,12 +155,17 @@ class TigaStrategy:
         LOGGER.info('Converting TIGA strategy to TA...')
         # blocks = list(filter(lambda b: len(b.edges) > 0, self.blocks))
 
-        locations = []
-        edges = []
+        locations: List[Location] = []
+        edges: List[Edge] = []
         for b in self.blocks:
-            locations.append(Location(b.state.state))
+            if len(b.edges)==0:
+                continue
+            curr_loc = Location(b.state.state)
+            locations.append(curr_loc)
+            for e in b.edges:
+                edges.append(Edge(e.guard, '', '', curr_loc, Location(e.next_state)))
 
-        pta = PTA(locations, [])
+        pta = PTA(locations, edges)
 
         if view:
             pta.plot(self.name)
@@ -180,7 +185,7 @@ def parse_tiga_strategy(name: str, file_content: List[str]):
             str_blocks[-1].append(line)
 
     blocks = []
-    for block in str_blocks:
+    for block in tqdm(str_blocks):
         try:
             blocks.append(TigaBlock.parse(block))
         except ValueError:

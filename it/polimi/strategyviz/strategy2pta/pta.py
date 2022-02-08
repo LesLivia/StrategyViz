@@ -61,13 +61,16 @@ class State:
         return res
 
     def __eq__(self, other):
-        return len(set(self.locs) - set(other.locs)) == 0 and len(set(self.vars) - set(other.vars))
+        return len(set(self.locs) - set(other.locs)) == 0 and len(set(self.vars) - set(other.vars)) == 0
 
 
 class Location:
     def __init__(self, state: State):
         self.state = state
         self.label = str(self.state)
+
+    def __eq__(self, other):
+        return self.state == other.state
 
 
 class Edge:
@@ -91,7 +94,7 @@ class PTA:
             gra.node(l.label)
 
         for e in self.edges:
-            gra.edge(e.start.label, e.end.label, constraint=e.guard + '\n' + e.sync)
+            gra.edge(e.start.label, e.end.label, label=e.guard + '\n' + e.sync)
 
         return gra
 
