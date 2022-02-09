@@ -1,6 +1,8 @@
 from typing import List
+
 from tqdm import tqdm
-from it.polimi.strategyviz.strategy2pta.pta import PTA, Location, State, StateVariable, ExtLocation, Edge
+
+from it.polimi.strategyviz.strategy2pta.pta import PTA, Location, State, StateVariable, NetLocation, Edge
 from it.polimi.strategyviz.viz_logging.logger import Logger
 
 LOGGER = Logger('TIGA PARSER')
@@ -24,7 +26,7 @@ class TigaState:
 
         ext_locs_str = fields[1].split(')')[0].replace('(', '').split(' ')
         ext_locs_str = list(filter(lambda s: len(s) > 0, ext_locs_str))
-        ext_locs = [ExtLocation.parse(s) for s in ext_locs_str]
+        ext_locs = [NetLocation.parse(s) for s in ext_locs_str]
 
         state_vars_str = fields[1].split(')')[1].split(' ')
         state_vars_str = list(filter(lambda s: s.__contains__('='), state_vars_str))
@@ -57,7 +59,7 @@ class TigaEdge:
         guard = fields[0]
         next_str = fields[1]
         next_loc_str = next_str.split(' {')[0].split('->')[1]
-        next_loc = ExtLocation(next_loc_str.split('.')[0], next_loc_str.split('.')[1])
+        next_loc = NetLocation(next_loc_str.split('.')[0], next_loc_str.split('.')[1])
 
         next_vars_str = next_str.split(' {')[1].replace(' }\n', '').split(', ')
         next_vars: List[StateVariable] = []
@@ -174,10 +176,10 @@ class TigaStrategy:
                 new_guard = new_guard + e.guard
                 edges.append(Edge(new_guard, '', '', curr_loc, Location(e.next_state.locs)))
 
-        pta = PTA(list(set(locations)), edges)
+        pta = PTA('tiga_strategy', list(set(locations)), edges)
 
         if view:
-            pta.plot(self.name)
+            pta.plot()
 
         LOGGER.info('TA successfully created.')
         return pta
@@ -186,7 +188,7 @@ class TigaStrategy:
 def parse_tiga_strategy(name: str, file_content: List[str]):
     initial_str = file_content[file_content.index('Initial state:\n') + 1]
     initial_locs_str = initial_str.split(' ) ')[0].replace('( ', '').split(' ')
-    initial_locs = [ExtLocation(s.split('.')[0], s.split('.')[1]) for s in initial_locs_str]
+    initial_locs = [NetLocation(s.split('.')[0], s.split('.')[1]) for s in initial_locs_str]
     initial_vars_str = initial_str.split(' ) ')[1].replace(' \n', '').split(' ')
     initial_vars = [StateVariable(s.split('=')[0], s.split('=')[1]) for s in initial_vars_str]
     initial_state = State(initial_locs, initial_vars)

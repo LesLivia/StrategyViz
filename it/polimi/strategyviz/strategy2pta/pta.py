@@ -10,7 +10,7 @@ config.read(sys.argv[1])
 config.sections()
 
 
-class ExtLocation:
+class NetLocation:
     def __init__(self, tplt: str, label: str):
         self.tplt = tplt
         self.label = label
@@ -18,7 +18,7 @@ class ExtLocation:
     @staticmethod
     def parse(line: str):
         fields = line.split('.')
-        return ExtLocation(fields[0], fields[1])
+        return NetLocation(fields[0], fields[1])
 
     def __str__(self):
         return self.tplt + '.' + self.label
@@ -51,7 +51,7 @@ class StateVariable:
 
 
 class State:
-    def __init__(self, locs: List[ExtLocation], vars: List[StateVariable]):
+    def __init__(self, locs: List[NetLocation], vars: List[StateVariable]):
         self.locs = locs
         self.vars = vars
 
@@ -71,17 +71,17 @@ class State:
 
 
 class Location:
-    def __init__(self, state: List[ExtLocation], initial=False):
-        self.state = state
+    def __init__(self, net_locs: List[NetLocation], initial=False):
+        self.net_locs = net_locs
         self.initial = initial
         self.label = ''
-        for i, l in enumerate(state):
+        for i, l in enumerate(net_locs):
             self.label += str(l)
-            if i < len(state) - 1:
+            if i < len(net_locs) - 1:
                 self.label += ',\n'
 
     def __eq__(self, other):
-        return all([x in other.state for x in self.state])
+        return all([x in other.net_locs for x in self.net_locs])
 
     def __hash__(self):
         return hash(str(self))
@@ -98,12 +98,13 @@ class Edge:
 
 
 class PTA:
-    def __init__(self, locs: List[Location], edges: List[Edge]):
+    def __init__(self, name: str, locs: List[Location], edges: List[Edge]):
+        self.name = name
         self.locations = locs
         self.edges = edges
 
-    def to_digraph(self, name: str):
-        gra = Digraph(name)
+    def to_digraph(self):
+        gra = Digraph(self.name)
 
         for l in self.locations:
             if l.initial:
@@ -116,6 +117,6 @@ class PTA:
 
         return gra
 
-    def plot(self, name: str):
+    def plot(self):
         OUT_PATH = config['PTA CONFIGURATION']['SAVE_PATH']
-        self.to_digraph(name).render(directory=OUT_PATH, view=True)
+        self.to_digraph().render(directory=OUT_PATH, view=True)

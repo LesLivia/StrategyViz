@@ -2,6 +2,7 @@ import configparser
 import sys
 
 from it.polimi.strategyviz.strategy2pta.tigaparser import parse_tiga_strategy, TigaStrategy
+from it.polimi.strategyviz.upp2pta.converter import parse_uppaal_model
 from it.polimi.strategyviz.viz_logging.logger import Logger
 
 config = configparser.ConfigParser()
@@ -25,10 +26,13 @@ def convert():
     with open(TIGA_PATH) as tiga_strategy_file:
         lines = tiga_strategy_file.readlines()
         tiga_strategy: TigaStrategy = parse_tiga_strategy(sys.argv[2], lines)
+        EXISTING_PTA = parse_uppaal_model()
         tiga_strategy.to_pta(view=True)
 
     LOGGER.info("TIGA strategy successfully parsed.")
 
+    LOGGER.info("Parsing Stratego strategy...")
     with open(STRATEGO_PATH) as stratego_strategy:
+        # TODO
         lines = stratego_strategy.readlines()
-        print(len(lines))
+    LOGGER.info("Stratego strategy successfully parsed.")
