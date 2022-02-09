@@ -154,21 +154,23 @@ class TigaStrategy:
         self.blocks = blocks
         self.initial_state = initial_state
 
-    def to_pta(self, view=False):
+    def to_pta(self, network: List[PTA], view=False):
         LOGGER.info('Converting TIGA strategy to TA...')
         # blocks = list(filter(lambda b: len(b.edges) > 0, self.blocks))
 
         locations: List[Location] = []
         edges: List[Edge] = []
         for b in tqdm(self.blocks):
-            # TODO: blocks with "wait" action should have a destination, to be retrieved from the model
-            # if len(b.edges) == 0:
-            #    continue
             if len(locations) >= 100:
                 LOGGER.warn('Truncating due to excessive size.')
                 break
             curr_loc = Location(b.state.state.locs, b.state.state == self.initial_state)
             locations.append(curr_loc)
+
+            if len(b.edges) == 0:
+                external_pta: PTA = network[0]
+                edges += list(filter(lambda e: e.start.label == curr_loc.label, external_pta.edges))
+
             for e in b.edges:
                 new_guard = ''
                 for v in b.state.state.vars:
@@ -176,7 +178,11 @@ class TigaStrategy:
                 new_guard = new_guard + e.guard
                 edges.append(Edge(new_guard, '', '', curr_loc, Location(e.next_state.locs)))
 
-        pta = PTA('tiga_strategy', list(set(locations)), edges)
+        bps_ids = [bp.label for bp in network[0].branchpoints]
+        edges_from_bps = list(filter(lambda e: e.start.label in bps_ids, network[0].edges))
+        edges += edges_from_bps
+
+        pta = PTA('tiga_strategy', list(set(locations)), edges, network[0].branchpoints)
 
         if view:
             pta.plot()

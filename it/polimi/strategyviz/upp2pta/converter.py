@@ -66,7 +66,7 @@ def parse_edges(tplt: Element, locations, bps):
     return edges
 
 
-def parse_uppaal_model():
+def parse_uppaal_model(view=False):
     if len(sys.argv) < 5:
         LOGGER.error("Wrong input parameters.")
         raise RuntimeError
@@ -88,4 +88,7 @@ def parse_uppaal_model():
 
         PTAS.append(PTA(pta_name, list(locations.values()), edges, bps))
 
-    [p.plot() for p in PTAS]
+    if view:
+        [pta.plot() for pta in PTAS]
+
+    return PTAS

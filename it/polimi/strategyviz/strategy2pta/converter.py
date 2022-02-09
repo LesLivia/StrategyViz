@@ -26,8 +26,8 @@ def convert():
     with open(TIGA_PATH) as tiga_strategy_file:
         lines = tiga_strategy_file.readlines()
         tiga_strategy: TigaStrategy = parse_tiga_strategy(sys.argv[2], lines)
-        EXISTING_PTA = parse_uppaal_model()
-        tiga_strategy.to_pta(view=True)
+        network = parse_uppaal_model(view=True)
+        tiga_strategy.to_pta(network, view=True)
 
     LOGGER.info("TIGA strategy successfully parsed.")
 
