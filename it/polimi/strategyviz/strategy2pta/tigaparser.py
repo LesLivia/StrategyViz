@@ -147,9 +147,10 @@ class TigaBlock:
 
 
 class TigaStrategy:
-    def __init__(self, name: str, blocks: List[TigaBlock]):
+    def __init__(self, name: str, blocks: List[TigaBlock], initial_state: State):
         self.name = name
         self.blocks = blocks
+        self.initial_state = initial_state
 
     def to_pta(self, view=False):
         LOGGER.info('Converting TIGA strategy to TA...')
@@ -157,15 +158,23 @@ class TigaStrategy:
 
         locations: List[Location] = []
         edges: List[Edge] = []
-        for b in self.blocks:
-            if len(b.edges)==0:
-                continue
-            curr_loc = Location(b.state.state)
+        for b in tqdm(self.blocks):
+            # TODO: blocks with "wait" action should have a destination, to be retrieved from the model
+            # if len(b.edges) == 0:
+            #    continue
+            if len(locations) >= 100:
+                LOGGER.warn('Truncating due to excessive size.')
+                break
+            curr_loc = Location(b.state.state.locs, b.state.state == self.initial_state)
             locations.append(curr_loc)
             for e in b.edges:
-                edges.append(Edge(e.guard, '', '', curr_loc, Location(e.next_state)))
+                new_guard = ''
+                for v in b.state.state.vars:
+                    new_guard += str(v) + '&&\n'
+                new_guard = new_guard + e.guard
+                edges.append(Edge(new_guard, '', '', curr_loc, Location(e.next_state.locs)))
 
-        pta = PTA(locations, edges)
+        pta = PTA(list(set(locations)), edges)
 
         if view:
             pta.plot(self.name)
@@ -175,6 +184,13 @@ class TigaStrategy:
 
 
 def parse_tiga_strategy(name: str, file_content: List[str]):
+    initial_str = file_content[file_content.index('Initial state:\n') + 1]
+    initial_locs_str = initial_str.split(' ) ')[0].replace('( ', '').split(' ')
+    initial_locs = [ExtLocation(s.split('.')[0], s.split('.')[1]) for s in initial_locs_str]
+    initial_vars_str = initial_str.split(' ) ')[1].replace(' \n', '').split(' ')
+    initial_vars = [StateVariable(s.split('=')[0], s.split('=')[1]) for s in initial_vars_str]
+    initial_state = State(initial_locs, initial_vars)
+
     start_index = file_content.index('Strategy to win:\n')
     block_lines = file_content[start_index + 1:]
     str_blocks = []
@@ -191,4 +207,4 @@ def parse_tiga_strategy(name: str, file_content: List[str]):
         except ValueError:
             LOGGER.error("An error occurred while parsing the TIGA strategy.")
 
-    return TigaStrategy(name, blocks)
+    return TigaStrategy(name, blocks, initial_state)

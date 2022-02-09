@@ -26,6 +26,9 @@ class ExtLocation:
     def __eq__(self, other):
         return self.tplt == other.tplt and self.label == other.label
 
+    def __hash__(self):
+        return hash(str(self))
+
 
 class StateVariable:
     def __init__(self, identifier: str, value):
@@ -42,6 +45,9 @@ class StateVariable:
 
     def __eq__(self, other):
         return self.identifier == other.identifier and self.value == other.value
+
+    def __hash__(self):
+        return hash(str(self))
 
 
 class State:
@@ -65,16 +71,25 @@ class State:
 
 
 class Location:
-    def __init__(self, state: State):
+    def __init__(self, state: List[ExtLocation], initial=False):
         self.state = state
-        self.label = str(self.state)
+        self.initial = initial
+        self.label = ''
+        for i, l in enumerate(state):
+            self.label += str(l)
+            if i < len(state) - 1:
+                self.label += ',\n'
 
     def __eq__(self, other):
-        return self.state == other.state
+        return all([x in other.state for x in self.state])
+
+    def __hash__(self):
+        return hash(str(self))
 
 
 class Edge:
     def __init__(self, guard: str, sync: str, update: str, start: Location, end: Location):
+        guard = guard.replace('(', '').replace(')', '').replace(' && ', ' &&\n')
         self.guard = guard
         self.sync = sync
         self.update = update
@@ -91,7 +106,10 @@ class PTA:
         gra = Digraph(name)
 
         for l in self.locations:
-            gra.node(l.label)
+            if l.initial:
+                gra.node(l.label, _attributes={'peripheries': '2'})
+            else:
+                gra.node(l.label)
 
         for e in self.edges:
             gra.edge(e.start.label, e.end.label, label=e.guard + '\n' + e.sync)
