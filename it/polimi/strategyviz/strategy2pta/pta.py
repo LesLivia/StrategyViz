@@ -88,7 +88,7 @@ class Location:
 
 
 class Edge:
-    def __init__(self, guard: str, sync: str, update: str, start: Location, end: Location):
+    def __init__(self, guard: str, sync: str, update: str, start, end):
         guard = guard.replace('(', '').replace(')', '').replace(' && ', ' &&\n')
         self.guard = guard
         self.sync = sync
@@ -97,11 +97,21 @@ class Edge:
         self.end = end
 
 
+class BranchPoint:
+    def __init__(self, id: str):
+        self.id = id
+        self.label = id
+
+    def __eq__(self, other):
+        return self.id == other.id
+
+
 class PTA:
-    def __init__(self, name: str, locs: List[Location], edges: List[Edge]):
+    def __init__(self, name: str, locs: List[Location], edges: List[Edge], bps: List[BranchPoint] = None):
         self.name = name
         self.locations = locs
         self.edges = edges
+        self.branchpoints = bps if bps is not None else []
 
     def to_digraph(self):
         gra = Digraph(self.name)
@@ -114,6 +124,9 @@ class PTA:
 
         for e in self.edges:
             gra.edge(e.start.label, e.end.label, label=e.guard + '\n' + e.sync)
+
+        for bp in self.branchpoints:
+            gra.node(bp.id, _attributes={'shape': 'point'})
 
         return gra
 
