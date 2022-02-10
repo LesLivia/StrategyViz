@@ -71,6 +71,8 @@ class State:
 
 
 class Location:
+    kind = 'LOC'
+
     def __init__(self, net_locs: List[NetLocation], initial=False):
         self.net_locs = net_locs
         self.initial = initial
@@ -80,8 +82,11 @@ class Location:
             if i < len(net_locs) - 1:
                 self.label += ',\n'
 
+    def __str__(self):
+        return self.label
+
     def __eq__(self, other):
-        return all([x in other.net_locs for x in self.net_locs])
+        return self.label == other.label
 
     def __hash__(self):
         return hash(str(self))
@@ -96,14 +101,31 @@ class Edge:
         self.start = start
         self.end = end
 
+    def __str__(self):
+        return self.guard + ' ' + self.sync + ' { ' + self.update + ' } ' + self.start.label + '->' + self.end.label
+
+    def __eq__(self, other):
+        return str(self) == str(other)
+
+    def __hash__(self):
+        return hash(str(self))
+
 
 class BranchPoint:
+    kind = 'BP'
+
     def __init__(self, id: str):
         self.id = id
         self.label = id
 
     def __eq__(self, other):
-        return self.id == other.id
+        return self.label == other.label
+
+    def __str__(self):
+        return self.label
+
+    def __hash__(self):
+        return hash(str(self))
 
 
 class PTA:

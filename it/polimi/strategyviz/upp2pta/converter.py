@@ -19,7 +19,10 @@ def parse_locations(tplt: Element, pta_name: str, initial_id: str):
     locations = {}
     for node in tplt.iter('location'):
         loc_id = node.attrib['id']
-        loc_label = node.find('name').text
+        try:
+            loc_label = node.find('name').text
+        except AttributeError:
+            loc_label = loc_id
         net_locs: List[NetLocation] = [NetLocation(pta_name, loc_label)]
         locations[loc_id] = Location(net_locs, initial_id == loc_id)
 
