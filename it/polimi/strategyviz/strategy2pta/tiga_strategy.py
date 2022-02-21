@@ -46,8 +46,10 @@ class TigaEdge:
     # E.g.
     # When you are in (time<=15 && T<=2 && T-time<-3), take transition Kim.GoBack->Kim.Aalborg { 1, tau, 1 }
     # When you are in (6<time && time<=15 && T<=2), take transition Kim.Wait->Kim.GoBack { 1, tau, T := 0, retry := 1 }
-    def __init__(self, guard: str, next_state: State):
+    def __init__(self, guard: str, sync:str, update: str, next_state: State):
         self.guard = guard
+        self.sync = sync
+        self.update = update
         self.next_state = next_state
 
     @classmethod
@@ -60,8 +62,17 @@ class TigaEdge:
 
         fields = line.split(cls.opener)[1].split(cls.middle)
         guard = fields[0]
+
         next_str = fields[1]
+
+        update = next_str.split(' {')[1].replace(' }', '').split(',')
+        sync = ''.join([s for s in update if s.__contains__('!')])
+        update = [u for u in update if u.__contains__('=')]
+        update = ','.join(update)
+
         next_loc_str = next_str.split(' {')[0].split('->')[1]
+
+
         next_loc = NetLocation(next_loc_str.split('.')[0], next_loc_str.split('.')[1])
         next_locs = [next_loc]
         # TODO: hard-coded, just for demo purposes
@@ -89,7 +100,7 @@ class TigaEdge:
         # TODO: the strategy only contains the destination location for the automaton making the transition
         # but it is possible that such transition causes other automata to switch as well (e.g., through channels),
         # and these should be calculated as well
-        return TigaEdge(guard, State(next_locs, next_vars))
+        return TigaEdge(guard, sync, update, State(next_locs, next_vars))
 
     def __str__(self):
         return self.str_format.format(self.opener, self.guard, self.middle, self.next_state)
@@ -187,7 +198,7 @@ class TigaStrategy:
                 for v in b.state.state.vars:
                     new_guard += str(v) + '&&\n'
                 new_guard = new_guard + e.guard
-                edges.add(Edge(new_guard, '', '', curr_loc, Location(e.next_state.locs)))
+                edges.add(Edge(new_guard, e.sync, e.update, curr_loc, Location(e.next_state.locs)))
 
         # TODO Clearly, it only works if there is only one pta in the network
         # (or, at least, if there is only one with controllable edges)

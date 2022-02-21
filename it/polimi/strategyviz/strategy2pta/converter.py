@@ -6,6 +6,7 @@ from it.polimi.strategyviz.strategy2pta.pta import PTA, Location
 from it.polimi.strategyviz.strategy2pta.tigaparser import parse_tiga_strategy, TigaStrategy
 from it.polimi.strategyviz.upp2pta.converter import parse_uppaal_model
 from it.polimi.strategyviz.viz_logging.logger import Logger
+from it.polimi.strategyviz.strategy2pta.stratego_parser import parse_optimized_strategy
 
 config = configparser.ConfigParser()
 config.sections()
@@ -96,8 +97,10 @@ def convert():
 
     LOGGER.info("TIGA strategy successfully parsed.")
 
-    LOGGER.info("Parsing Stratego strategy...")
-    with open(STRATEGO_PATH) as stratego_strategy:
-        # TODO
-        lines = stratego_strategy.readlines()
+    LOGGER.info("Parsing optimized strategy...")
+
+    with open(STRATEGO_PATH) as opt_strategy_file:
+        data: str = opt_strategy_file.read()
+        optimized_strategy = parse_optimized_strategy(sys.argv[3], data)
+
     LOGGER.info("Stratego strategy successfully parsed.")
