@@ -1,7 +1,7 @@
 import configparser
 import sys
 from typing import List
-
+from enum import Enum
 from graphviz import Digraph
 
 config = configparser.ConfigParser()
@@ -135,7 +135,23 @@ class PTA:
         self.edges = edges
         self.branchpoints = bps if bps is not None else []
 
+    @staticmethod
+    def fix_label_for_html(s: str, color=None):
+        if s == '':
+            return s
+        res = s.replace('&', '&amp;')
+        res = res.replace('<', '&lt;')
+        res = res.replace('>', '&gt;')
+        res = res.replace('\n', '<BR/>')
+        if color is not None:
+            res = '<font color=\'{}\'>'.format(color) + res + '</font>'
+        return res
+
     def to_digraph(self):
+        GREEN = '#3a9e05'
+        RED = '#ad0900'
+        BLUE = 'blue'
+
         gra = Digraph(self.name)
 
         for l in self.locations:
@@ -145,7 +161,11 @@ class PTA:
                 gra.node(l.label)
 
         for e in self.edges:
-            gra.edge(e.start.label, e.end.label, label=e.guard + '\n' + e.sync)
+            guard = PTA.fix_label_for_html(e.guard, GREEN)
+            sync = PTA.fix_label_for_html(e.sync, RED)
+            update = PTA.fix_label_for_html(e.update, BLUE)
+            label = "<" + guard + '<BR/>' + sync + '<BR/>' + update + ">"
+            gra.edge(e.start.label, e.end.label, label=label)
 
         for bp in self.branchpoints:
             gra.node(bp.id, _attributes={'shape': 'point'})
