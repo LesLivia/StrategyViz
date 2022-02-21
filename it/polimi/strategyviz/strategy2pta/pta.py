@@ -1,7 +1,7 @@
 import configparser
 import sys
 from typing import List
-from enum import Enum
+
 from graphviz import Digraph
 
 config = configparser.ConfigParser()

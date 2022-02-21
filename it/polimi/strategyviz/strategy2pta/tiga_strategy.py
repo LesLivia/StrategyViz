@@ -46,7 +46,7 @@ class TigaEdge:
     # E.g.
     # When you are in (time<=15 && T<=2 && T-time<-3), take transition Kim.GoBack->Kim.Aalborg { 1, tau, 1 }
     # When you are in (6<time && time<=15 && T<=2), take transition Kim.Wait->Kim.GoBack { 1, tau, T := 0, retry := 1 }
-    def __init__(self, guard: str, sync:str, update: str, next_state: State):
+    def __init__(self, guard: str, sync: str, update: str, next_state: State):
         self.guard = guard
         self.sync = sync
         self.update = update
@@ -71,7 +71,6 @@ class TigaEdge:
         update = ','.join(update)
 
         next_loc_str = next_str.split(' {')[0].split('->')[1]
-
 
         next_loc = NetLocation(next_loc_str.split('.')[0], next_loc_str.split('.')[1])
         next_locs = [next_loc]
