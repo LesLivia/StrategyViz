@@ -1,5 +1,7 @@
 from typing import Dict, List
 
+from tqdm import tqdm
+
 from it.polimi.strategyviz.strategy2pta.pta import State, NetLocation, StateVariable, PTA, Edge
 from it.polimi.strategyviz.viz_logging.logger import Logger
 
@@ -19,7 +21,9 @@ class OptimizedState:
         for i, v in enumerate(statevars_values):
             if statevars[i] in location_names.keys():
                 curr_loc_str = location_names[statevars[i]][v]
-                state_locs.append(NetLocation(statevars[i].split('.')[0], curr_loc_str))
+                # TODO: experimental, only keep the pta with controllable edges
+                if len(state_locs) <= 0:
+                    state_locs.append(NetLocation(statevars[i].split('.')[0], curr_loc_str))
             else:
                 state_vars.append(StateVariable(statevars[i], v))
 
@@ -36,14 +40,21 @@ class Regressor:
         self.weights = weights
 
     @staticmethod
-    def parse(key: str, d: Dict, statevars: List[str], location_names: Dict, actions: List[str]):
+    def parse(key: str, d: Dict, statevars: List[str], location_names: Dict, actions: Dict[str, str]):
         state = OptimizedState.parse(key, statevars, location_names)
 
         minimize = True if d['minimize'] == 1 else False
 
         weights: Dict[str, float] = {}
-        for a in d['regressor']:
-            weights[actions[a]] = d['regressor'][a]
+        for a in actions:
+            starting_loc = actions[a].split('->')
+            if actions[a] == 'WAIT' or str(state.state.locs[0]) != starting_loc[0]:
+                continue
+
+            if a in d['regressor']:
+                weights[actions[a]] = d['regressor'][a]
+            else:
+                weights[actions[a]] = None
 
         return Regressor(state, minimize, weights)
 
@@ -60,11 +71,14 @@ class OptimizedStrategy:
     def refine_pta(self, pta: PTA):
         LOGGER.info('Refining TIGA strategy...')
 
+        all_edges = len(pta.edges)
+
         edges_to_delete: List[Edge] = []
-        for reg in self.regressors:
+        for reg in tqdm(self.regressors):
             f = min if reg.minimize else max
-            best_weight = f(list(reg.weights.values()))
-            to_be_deleted = [e for e in list(reg.weights.keys()) if reg.weights[e] != best_weight]
+            best_weight = f([w for w in list(reg.weights.values()) if w is not None])
+            to_be_deleted = [e for e in list(reg.weights.keys())
+                             if reg.weights[e] is None or reg.weights[e] != best_weight]
             to_be_deleted = [e.split(' {')[0].split('->')[1] for e in to_be_deleted]
             curr_locs = '\n'.join([str(x) for x in reg.state.state.locs])
             for e in pta.edges:
@@ -77,5 +91,6 @@ class OptimizedStrategy:
         pta.edges = list(set(pta.edges) - set(edges_to_delete))
         pta.name = 'optimized_' + pta.name
 
-        LOGGER.info('TIGA strategy successfully refined.')
+        LOGGER.info('TIGA strategy successfully refined: {}/{} edges eliminated.'
+                    .format(len(edges_to_delete), all_edges))
         return pta

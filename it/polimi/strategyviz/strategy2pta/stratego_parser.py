@@ -15,6 +15,7 @@ def parse_optimized_strategy(name: str, data: str):
     state_vars = json_content['statevars']
     locationnames = json_content['locationnames']
     actions = json_content['actions']
+
     for state_str in regressors_dict:
         regressors.append(Regressor.parse(state_str, regressors_dict[state_str], state_vars, locationnames, actions))
 
