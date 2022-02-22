@@ -26,13 +26,14 @@ class TigaState:
 
         ext_locs_str = fields[1].split(')')[0].replace('(', '').split(' ')
         ext_locs_str = list(filter(lambda s: len(s) > 0, ext_locs_str))
-        ext_locs = [NetLocation.parse(s) for s in ext_locs_str]
+        # TODO: experimental, only keep pta to disambiguate
+        ext_locs = [NetLocation.parse(s) for s in ext_locs_str][0]
 
         state_vars_str = fields[1].split(')')[1].split(' ')
         state_vars_str = list(filter(lambda s: s.__contains__('='), state_vars_str))
         state_vars = [StateVariable.parse(s) for s in state_vars_str]
 
-        return TigaState(State(ext_locs, state_vars))
+        return TigaState(State([ext_locs], state_vars))
 
     def __str__(self):
         return self.str_format.format(self.opener, self.state)
@@ -75,10 +76,10 @@ class TigaEdge:
         next_loc = NetLocation(next_loc_str.split('.')[0], next_loc_str.split('.')[1])
         next_locs = [next_loc]
         # TODO: hard-coded, just for demo purposes
-        if next_loc.label == 'moving':
-            next_locs.append(NetLocation('h', 'walk'))
-        elif next_loc.label == 'idle':
-            next_locs.append(NetLocation('h', 'stand'))
+        # if next_loc.label == 'moving':
+        #     next_locs.append(NetLocation('h', 'walk'))
+        # elif next_loc.label == 'idle':
+        #     next_locs.append(NetLocation('h', 'stand'))
         curr_state_locs = list(filter(lambda l: l.tplt not in [l.tplt for l in next_locs], curr_state_locs))
         next_locs.extend(curr_state_locs)
 
@@ -181,10 +182,6 @@ class TigaStrategy:
         locations: Set[Location] = set()
         edges: Set[Edge] = set()
         for b in tqdm(self.blocks):
-            # TODO: main issue, the strategy explodes
-            if len(locations) >= 100 or len(edges) >= 50:
-                LOGGER.warn('Truncating due to excessive size.')
-                break
             curr_loc = Location(b.state.state.locs, len(set(b.state.state.locs) - set(self.initial_state.locs)) == 0)
             locations.add(curr_loc)
 

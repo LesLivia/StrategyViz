@@ -160,7 +160,11 @@ class PTA:
             else:
                 gra.node(l.label)
 
-        for e in self.edges:
+        for i, e in enumerate(self.edges):
+            # TODO: main issue, strategy explodes
+            if i > 30:
+                break
+
             guard = PTA.fix_label_for_html(e.guard, GREEN)
             sync = PTA.fix_label_for_html(e.sync, RED)
             update = PTA.fix_label_for_html(e.update, BLUE)

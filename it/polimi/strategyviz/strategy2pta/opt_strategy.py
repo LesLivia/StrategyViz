@@ -75,7 +75,7 @@ class OptimizedStrategy:
                     edges_to_delete.append(e)
 
         pta.edges = list(set(pta.edges) - set(edges_to_delete))
-        pta.name = pta.name.replace('trimmed', 'optimized')
+        pta.name = 'optimized_' + pta.name
 
         LOGGER.info('TIGA strategy successfully refined.')
         return pta

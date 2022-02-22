@@ -90,9 +90,12 @@ def convert():
     with open(TIGA_PATH) as tiga_strategy_file:
         lines = tiga_strategy_file.readlines()
         tiga_strategy: TigaStrategy = parse_tiga_strategy(sys.argv[2], lines)
-        network = parse_uppaal_model(view=False)
+        network = parse_uppaal_model(view=True)
         tiga_strategy_pta = tiga_strategy.to_pta(network, view=True)
-        tiga_strategy_pta = clean_pta(tiga_strategy_pta)
+        try:
+            tiga_strategy_pta = clean_pta(tiga_strategy_pta)
+        except IndexError:
+            LOGGER.error("An error occurred while trimming the PTA.")
         tiga_strategy_pta.plot()
 
     LOGGER.info("TIGA strategy successfully parsed.")
@@ -104,7 +107,10 @@ def convert():
         optimized_strategy = parse_optimized_strategy(sys.argv[3], data)
 
     final_pta = optimized_strategy.refine_pta(tiga_strategy_pta)
-    final_pta = clean_pta(final_pta)
+    try:
+        final_pta = clean_pta(final_pta)
+    except IndexError:
+        LOGGER.error("An error occurred while trimming the PTA.")
     final_pta.plot()
 
     LOGGER.info("Stratego strategy successfully parsed.")

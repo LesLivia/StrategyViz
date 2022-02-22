@@ -81,15 +81,19 @@ def parse_uppaal_model(view=False):
 
     tree = et.parse(MODEL_PATH)
     root = tree.getroot()
+    instances = [i.text for i in root.iter('system')][0].split('\n')
+    instances = [i.replace(' ', '') for i in instances if i.__contains__('=')]
     for tplt in root.iter('template'):
-        pta_name = tplt.find('name').text
+        tplt_name = tplt.find('name').text
+        pta_names = [i.split('=')[0] for i in instances if i.__contains__(tplt_name)]
         initial_id = tplt.find('init').attrib['ref']
 
-        locations = parse_locations(tplt, pta_name, initial_id)
-        bps = parse_branchpoints(tplt)
-        edges = parse_edges(tplt, locations, bps)
+        for instance in pta_names:
+            locations = parse_locations(tplt, instance, initial_id)
+            bps = parse_branchpoints(tplt)
+            edges = parse_edges(tplt, locations, bps)
 
-        PTAS.append(PTA(pta_name, list(locations.values()), edges, bps))
+            PTAS.append(PTA(instance, list(locations.values()), edges, bps))
 
     if view:
         [pta.plot() for pta in PTAS]
