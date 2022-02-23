@@ -55,8 +55,20 @@ else:
 
 #
 
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+
 class Logger:
-    format = "\n[{}:{}] ({})\t{}"
+    format = "\n[{}:{}] ({})\t{}" + bcolors.ENDC
 
     def __init__(self, speaker):
         self.speaker = speaker
@@ -64,20 +76,20 @@ class Logger:
 
     def info(self, msg):
         if MIN_LOG_LEVEL <= LogLevel.INFO.value:
-            print(self.format.format(self.speaker, datetime.now(), str(LogLevel.INFO), msg))
+            print(bcolors.OKBLUE + self.format.format(self.speaker, datetime.now(), str(LogLevel.INFO), msg), end='')
 
     def debug(self, msg):
         if MIN_LOG_LEVEL <= LogLevel.DEBUG.value:
-            print(self.format.format(self.speaker, datetime.now(), str(LogLevel.DEBUG), msg))
+            print(self.format.format(self.speaker, datetime.now(), str(LogLevel.DEBUG), msg), end='')
 
     def warn(self, msg):
         if MIN_LOG_LEVEL <= LogLevel.WARNING.value:
-            print(self.format.format(self.speaker, datetime.now(), str(LogLevel.WARNING), msg))
+            print(self.format.format(self.speaker, datetime.now(), str(LogLevel.WARNING), msg), end='')
 
     def error(self, msg):
         if MIN_LOG_LEVEL <= LogLevel.ERROR.value:
-            print(self.format.format(self.speaker, datetime.now(), str(LogLevel.ERROR), msg))
+            print(bcolors.FAIL + self.format.format(self.speaker, datetime.now(), str(LogLevel.ERROR), msg), end='')
 
     def msg(self, msg):
         if MIN_LOG_LEVEL <= LogLevel.MSG.value:
-            print(self.format.format(self.speaker, datetime.now(), str(LogLevel.MSG), msg))
+            print(bcolors.OKGREEN + self.format.format(self.speaker, datetime.now(), str(LogLevel.MSG), msg), end='')

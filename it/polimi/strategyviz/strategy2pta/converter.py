@@ -98,7 +98,7 @@ def convert():
             LOGGER.error("An error occurred while trimming the PTA.")
         # tiga_strategy_pta.plot()
 
-    LOGGER.info("TIGA strategy successfully parsed.")
+    LOGGER.msg("TIGA strategy successfully parsed.")
 
     LOGGER.info("Parsing optimized strategy...")
 
@@ -113,4 +113,6 @@ def convert():
         LOGGER.error("An error occurred while trimming the PTA.")
     final_pta.plot()
 
-    LOGGER.info("Stratego strategy successfully parsed.")
+    LOGGER.msg("Stratego strategy successfully parsed.")
+
+    return final_pta

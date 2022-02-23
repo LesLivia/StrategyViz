@@ -7,4 +7,4 @@ LOGGER.info('Starting conversion...')
 
 convert()
 
-LOGGER.info('Conversion complete.')
+LOGGER.msg('Conversion complete.')
