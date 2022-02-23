@@ -70,29 +70,67 @@ def to_uppaal_model(pta: PTA):
 
     # ADD LOCATIONS
     init_id = ''
-
+    ids = {}
+    positions = {}
     x = 0
     y = 0
     for i, l in enumerate(pta.locations):
         x, y = get_new_coord(x, y)
-        new_attrib = {'id': 'id' + str(i), 'x': str(x), 'y': str(y)}
+        new_id = 'id' + str(i)
+        ids[l.label] = new_id
+        positions[new_id] = (x, y)
+        new_attrib = {'id': new_id, 'x': str(x), 'y': str(y)}
         new_loc = cet.SubElement(new_template, 'location', new_attrib)
         new_name = cet.SubElement(new_loc, 'name', {'x': str(x), 'y': str(y - 10)})
         new_name.text = l.label.split('.')[-1]
         if l.initial:
-            init_id = 'id' + str(i)
+            init_id = new_id
 
+    # ADD BRANCHPOINTS
     for i, bp in enumerate(pta.branchpoints):
         x, y = get_new_coord(x, y)
-        new_attrib = {'id': 'id' + str(i), 'x': str(x), 'y': str(y)}
+        new_id = 'id' + str(i + len(pta.locations))
+        ids[bp.label] = new_id
+        positions[new_id] = (x, y)
+        new_attrib = {'id': new_id, 'x': str(x), 'y': str(y)}
         new_bp = cet.SubElement(new_template, 'branchpoint', new_attrib)
 
+    # ADD INITIAL LOCATION MARKER
     new_init = cet.SubElement(new_template, 'init', {'ref': init_id})
+
+    # ADD EDGES
+    for i, e in enumerate(pta.edges):
+        new_id = 'id' + str(i + len(pta.locations) + len(pta.branchpoints))
+        new_edge = cet.SubElement(new_template, 'transition', {'id': new_id, 'controllable':'false'})
+        new_start = cet.SubElement(new_edge, 'source', {'ref': ids[e.start.label]})
+        new_end = cet.SubElement(new_edge, 'target', {'ref': ids[e.end.label]})
+        labels_pos = ((positions[ids[e.end.label]][0] - positions[ids[e.start.label]][0]) / 2,
+                      (positions[ids[e.end.label]][1] - positions[ids[e.start.label]][1]) / 2)
+        new_guard = cet.SubElement(new_edge, 'label',
+                                   {'kind': 'guard', 'x': str(labels_pos[0]), 'y': str(labels_pos[1])})
+        new_guard.text = e.guard
+        new_sync = cet.SubElement(new_edge, 'label',
+                                  {'kind': 'sync', 'x': str(labels_pos[0]), 'y': str(labels_pos[1])})
+        new_sync.text = e.sync
+        new_update = cet.SubElement(new_edge, 'label',
+                                    {'kind': 'assignment', 'x': str(labels_pos[0]), 'y': str(labels_pos[1])})
+        new_update.text = e.update
 
     # COPY SYSTEM DECLARATION
     for s in root.iter('system'):
         system_decl = cet.SubElement(new_root, 'system')
         system_decl.text = s.text
+
+    # COPY QUERIES
+    for q in root.iter('queries'):
+        new_queries = cet.SubElement(new_root, 'queries')
+
+        for c in q.getchildren():
+            new_c = cet.SubElement(new_queries, c.tag, c.attrib)
+            new_c.text = c.text
+            for c2 in c.getchildren():
+                new_c2 = cet.SubElement(new_c, c2.tag, c2.attrib)
+                new_c2.text = c2.text
 
     new_tree = cet.ElementTree(new_root)
     new_tree.write('./resources/test.xml')

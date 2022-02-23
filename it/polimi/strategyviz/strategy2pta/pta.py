@@ -41,7 +41,7 @@ class StateVariable:
         return StateVariable(fields[0], fields[1])
 
     def __str__(self):
-        return self.identifier + '=' + str(self.value)
+        return self.identifier + '==' + str(self.value)
 
     def __eq__(self, other):
         return self.identifier == other.identifier and self.value == other.value
