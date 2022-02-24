@@ -183,6 +183,8 @@ class TigaStrategy:
         edges: Set[Edge] = set()
         for b in tqdm(self.blocks):
             curr_loc = Location(b.state.state.locs, len(set(b.state.state.locs) - set(self.initial_state.locs)) == 0)
+            curr_invariant = list(filter(lambda l: l.label == curr_loc.label, network[0].locations))[0].invariant
+            curr_loc.invariant = curr_invariant
             locations.add(curr_loc)
 
             if len(b.edges) == 0:

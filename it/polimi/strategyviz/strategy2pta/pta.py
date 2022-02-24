@@ -73,7 +73,7 @@ class State:
 class Location:
     kind = 'LOC'
 
-    def __init__(self, net_locs: List[NetLocation], initial=False):
+    def __init__(self, net_locs: List[NetLocation], initial=False, invariant: str = None):
         self.net_locs = net_locs
         self.initial = initial
         self.label = ''
@@ -81,6 +81,7 @@ class Location:
             self.label += str(l)
             if i < len(net_locs) - 1:
                 self.label += ',\n'
+        self.invariant = invariant if invariant is not None else ''
 
     def __str__(self):
         return self.label
@@ -151,14 +152,18 @@ class PTA:
         GREEN = '#3a9e05'
         RED = '#ad0900'
         BLUE = 'blue'
+        PURPLE = '#ba03fc'
 
         gra = Digraph(self.name)
 
         for l in self.locations:
+            invariant = PTA.fix_label_for_html(l.invariant, PURPLE)
+            label = "<" + l.label + "<BR/>" + invariant + ">"
+
             if l.initial:
-                gra.node(l.label, _attributes={'peripheries': '2'})
+                gra.node(l.label, label=label, _attributes={'peripheries': '2'})
             else:
-                gra.node(l.label)
+                gra.node(l.label, label=label)
 
         for i, e in enumerate(self.edges):
             # TODO: main issue, strategy explodes

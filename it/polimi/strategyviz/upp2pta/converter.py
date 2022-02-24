@@ -23,8 +23,17 @@ def parse_locations(tplt: Element, pta_name: str, initial_id: str):
             loc_label = node.find('name').text
         except AttributeError:
             loc_label = loc_id
+        try:
+            loc_labels = node.iter('label')
+            loc_invariant = ''
+            for label in loc_labels:
+                if label.attrib['kind'] == 'invariant':
+                    loc_invariant = label.text
+        except AttributeError:
+            loc_invariant = None
+
         net_locs: List[NetLocation] = [NetLocation(pta_name, loc_label)]
-        locations[loc_id] = Location(net_locs, initial_id == loc_id)
+        locations[loc_id] = Location(net_locs, initial_id == loc_id, invariant=loc_invariant)
 
     return locations
 

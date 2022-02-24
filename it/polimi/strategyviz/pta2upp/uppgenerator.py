@@ -83,6 +83,8 @@ def to_uppaal_model(pta: PTA):
         new_loc = cet.SubElement(new_template, 'location', new_attrib)
         new_name = cet.SubElement(new_loc, 'name', {'x': str(x), 'y': str(y - 10)})
         new_name.text = l.label.split('.')[-1]
+        new_invariant = cet.SubElement(new_loc, 'label', {'kind': 'invariant', 'x': str(x), 'y': str(y - 15)})
+        new_invariant.text = l.invariant
         if l.initial:
             init_id = new_id
 
@@ -101,14 +103,14 @@ def to_uppaal_model(pta: PTA):
     # ADD EDGES
     for i, e in enumerate(pta.edges):
         new_id = 'id' + str(i + len(pta.locations) + len(pta.branchpoints))
-        new_edge = cet.SubElement(new_template, 'transition', {'id': new_id, 'controllable':'false'})
+        new_edge = cet.SubElement(new_template, 'transition', {'id': new_id, 'controllable': 'false'})
         new_start = cet.SubElement(new_edge, 'source', {'ref': ids[e.start.label]})
         new_end = cet.SubElement(new_edge, 'target', {'ref': ids[e.end.label]})
         labels_pos = ((positions[ids[e.end.label]][0] - positions[ids[e.start.label]][0]) / 2,
                       (positions[ids[e.end.label]][1] - positions[ids[e.start.label]][1]) / 2)
         new_guard = cet.SubElement(new_edge, 'label',
                                    {'kind': 'guard', 'x': str(labels_pos[0]), 'y': str(labels_pos[1])})
-        new_guard.text = e.guard
+        new_guard.text = e.guard.replace('<-', '< -')
         new_sync = cet.SubElement(new_edge, 'label',
                                   {'kind': 'sync', 'x': str(labels_pos[0]), 'y': str(labels_pos[1])})
         new_sync.text = e.sync
