@@ -117,6 +117,10 @@ def to_uppaal_model(pta: PTA):
         new_update = cet.SubElement(new_edge, 'label',
                                     {'kind': 'assignment', 'x': str(labels_pos[0]), 'y': str(labels_pos[1])})
         new_update.text = e.update
+        if e.weight is not None:
+            new_weight = cet.SubElement(new_edge, 'label',
+                                        {'kind': 'probability', 'x': str(labels_pos[0]), 'y': str(labels_pos[1])})
+            new_weight.text = e.weight
 
     # COPY SYSTEM DECLARATION
     for s in root.iter('system'):

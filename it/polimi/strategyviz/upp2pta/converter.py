@@ -56,13 +56,16 @@ def parse_edges(tplt: Element, locations, bps):
         guard = ''
         sync = ''
         update = ''
+        weight = None
         for label in trans.iter('label'):
             if label.attrib['kind'] == 'guard':
                 guard = label.text
-            if label.attrib['kind'] == 'assignment':
+            elif label.attrib['kind'] == 'assignment':
                 update = label.text
-            if label.attrib['kind'] == 'synchronisation':
+            elif label.attrib['kind'] == 'synchronisation':
                 sync = label.text
+            elif label.attrib['kind'] == 'probability':
+                weight = label.text
 
         try:
             source = locations[source_id]
@@ -73,7 +76,7 @@ def parse_edges(tplt: Element, locations, bps):
         except KeyError:
             target = list(filter(lambda b: b.id == target_id, bps))[0]
 
-        edges.append(Edge(guard, sync, update, source, target))
+        edges.append(Edge(guard, sync, update, source, target, weight))
 
     return edges
 

@@ -94,13 +94,14 @@ class Location:
 
 
 class Edge:
-    def __init__(self, guard: str, sync: str, update: str, start, end):
+    def __init__(self, guard: str, sync: str, update: str, start, end, weight: str = None):
         guard = guard.replace('(', '').replace(')', '').replace(' && ', ' &&\n')
         self.guard = guard
         self.sync = sync
         self.update = update
         self.start = start
         self.end = end
+        self.weight = weight
 
     def __str__(self):
         return self.guard + ' ' + self.sync + ' { ' + self.update + ' } ' + self.start.label + '->' + self.end.label
@@ -173,8 +174,13 @@ class PTA:
             guard = PTA.fix_label_for_html(e.guard, GREEN)
             sync = PTA.fix_label_for_html(e.sync, RED)
             update = PTA.fix_label_for_html(e.update, BLUE)
-            label = "<" + guard + '<BR/>' + sync + '<BR/>' + update + ">"
-            gra.edge(e.start.label, e.end.label, label=label)
+            label = "<" + guard + '<BR/>' + sync + '<BR/>' + update
+            attrib = {}
+            if e.weight is not None:
+                label += "<BR/>" + str(e.weight)
+                attrib['style'] = 'dashed'
+            label += ">"
+            gra.edge(e.start.label, e.end.label, label=label, _attributes=attrib)
 
         for bp in self.branchpoints:
             gra.node(bp.id, _attributes={'shape': 'point'})
