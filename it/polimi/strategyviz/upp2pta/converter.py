@@ -11,7 +11,7 @@ LOGGER = Logger('UPPAAL2PTA CONVERTER')
 
 config = configparser.ConfigParser()
 config.sections()
-config.read(sys.argv[1])
+config.read("./resources/config/config.ini")
 config.sections()
 
 
@@ -82,11 +82,11 @@ def parse_edges(tplt: Element, locations, bps):
 
 
 def parse_uppaal_model(view=False):
-    if len(sys.argv) < 5:
+    if len(sys.argv) < 4:
         LOGGER.error("Wrong input parameters.")
         raise RuntimeError
 
-    MODEL_NAME = sys.argv[4]
+    MODEL_NAME = sys.argv[3]
     MODEL_PATH = config['MODEL CONFIGURATION']['MODEL_PATH'] + MODEL_NAME + config['MODEL CONFIGURATION']['MODEL_EXT']
 
     PTAS = []

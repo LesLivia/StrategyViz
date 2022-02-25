@@ -10,7 +10,7 @@ from it.polimi.strategyviz.viz_logging.logger import Logger
 
 config = configparser.ConfigParser()
 config.sections()
-config.read(sys.argv[1])
+config.read("./resources/config/config.ini")
 config.sections()
 
 LOGGER = Logger('STRATEGY2PTA CONVERTER')
@@ -83,8 +83,8 @@ def convert():
         raise RuntimeError
 
     STRATEGIES_PATH = config['STRATEGY CONFIGURATION']['STRATEGY_PATH']
-    TIGA_PATH = STRATEGIES_PATH + sys.argv[2] + config['STRATEGY CONFIGURATION']['TIGA_EXT']
-    STRATEGO_PATH = STRATEGIES_PATH + sys.argv[3] + config['STRATEGY CONFIGURATION']['STRATEGO_EXT']
+    TIGA_PATH = STRATEGIES_PATH + sys.argv[1] + config['STRATEGY CONFIGURATION']['TIGA_EXT']
+    STRATEGO_PATH = STRATEGIES_PATH + sys.argv[2] + config['STRATEGY CONFIGURATION']['STRATEGO_EXT']
 
     LOGGER.info("Parsing TIGA strategy...")
     with open(TIGA_PATH) as tiga_strategy_file:
@@ -104,7 +104,7 @@ def convert():
 
     with open(STRATEGO_PATH) as opt_strategy_file:
         data: str = opt_strategy_file.read()
-        optimized_strategy = parse_optimized_strategy(sys.argv[3], data)
+        optimized_strategy = parse_optimized_strategy(sys.argv[2], data)
 
     final_pta = optimized_strategy.refine_pta(tiga_strategy_pta)
     try:

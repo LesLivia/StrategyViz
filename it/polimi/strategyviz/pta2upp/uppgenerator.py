@@ -8,7 +8,7 @@ from it.polimi.strategyviz.viz_logging.logger import Logger
 
 config = configparser.ConfigParser()
 config.sections()
-config.read(sys.argv[1])
+config.read("./resources/config/config.ini")
 config.sections()
 
 LOGGER = Logger('UPPAAL MODEL GENERATOR')
@@ -25,11 +25,11 @@ def get_new_coord(x: int, y: int):
 
 
 def to_uppaal_model(pta: PTA):
-    if len(sys.argv) < 5:
+    if len(sys.argv) < 4:
         LOGGER.error("Wrong input parameters.")
         raise RuntimeError
 
-    MODEL_NAME = sys.argv[4]
+    MODEL_NAME = sys.argv[3]
     MODEL_PATH = config['MODEL CONFIGURATION']['MODEL_PATH'] + MODEL_NAME + config['MODEL CONFIGURATION']['MODEL_EXT']
 
     tree = et.parse(MODEL_PATH)
@@ -139,4 +139,6 @@ def to_uppaal_model(pta: PTA):
                 new_c2.text = c2.text
 
     new_tree = cet.ElementTree(new_root)
-    new_tree.write('./resources/test.xml')
+
+    OUT_PATH = config['MODEL CONFIGURATION']['MODEL_OUT_PATH']
+    new_tree.write(OUT_PATH + sys.argv[3] + '_optimized.xml')

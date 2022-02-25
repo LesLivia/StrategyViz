@@ -6,7 +6,7 @@ from graphviz import Digraph
 
 config = configparser.ConfigParser()
 config.sections()
-config.read(sys.argv[1])
+config.read("./resources/config/config.ini")
 config.sections()
 
 
