@@ -3,7 +3,7 @@ Uppaal Stratego Strategies Extractor
 
 The repository contains a software tool to extract strategies generated through [Uppaal stratego][stratego] and convert
 them into Probabilitic Timed Automata (PTA). The tool processes both pure [TIGA][tiga]-style strategies and TIGA
-strategies optimized through Stratego. in [this article][paper2].
+strategies optimized through Stratego.
 
 The tool returns the original [Uppaal][uppaal] model (i.e., a PTA network) with all *controllable* edges replaced with *
 uncontrollable* ones with guard conditions calculated by the strategy.
@@ -44,6 +44,7 @@ Run the main script specifying:
 - the name of the TIGA strategy to convert (e.g., [gosafe](resources/strategies/gosafe.txt))
 - the name of the optimized strategy that refines the first one (e.g., [gofastsafe](resources/strategies/gofastsafe.json))
 - the name of the original .xml Uppaal file
+
 
 	python3 $REPO_PATH/it/polimi/strategyviz/main.py $TIGA_STRATEGY $OPT_STRATEGY $MODEL
 
