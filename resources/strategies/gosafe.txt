@@ -1,0 +1,55 @@
+Initial state:
+( Kim.Aalborg ) retry=0 
+(#time==time && time==T && T==0)
+Note: The 'strategy' is not guaranteed to be a strategy.
+
+Strategy to win:
+
+State: ( Kim.Go ) retry=1 
+While you are in	(time-T<=25 && T<=35 && T-time<-6), wait.
+
+State: ( Kim.Go ) retry=0 
+While you are in	(time-T<=25 && T<=35 && T-time<-3), wait.
+
+State: ( Kim.Bike ) retry=1 
+While you are in	(time-T<=15 && T<=45 && T-time<-3), wait.
+
+State: ( Kim.Wait ) retry=1 
+When you are in (6<time && time<=15 && T<=2), take transition Kim.Wait->Kim.GoBack { 1, tau, T := 0, retry := 1 }
+When you are in (6<time && time<=9 && T<=2), take transition Kim.Wait->Kim.Train { 1, tau, T := 0 }
+
+State: ( Kim.Train ) retry=0 
+While you are in	(time-T<=2 && T<=6 && T<=time) || (time-T<=9 && T<=6 && T-time<-3), wait.
+
+State: ( Kim.Sydney ) retry=0 
+While you are in	(time<=60), wait.
+
+State: ( Kim.Easy ) retry=1 
+While you are in	(time-T<=40 && T<=20 && T-time<-3), wait.
+
+State: ( Kim.Train ) retry=1 
+While you are in	(time-T<=9 && T<=6 && T-time<-3), wait.
+
+State: ( Kim.Sydney ) retry=1 
+While you are in	(3<time && time<=60), wait.
+
+State: ( Kim.Aalborg ) retry=1 
+When you are in (3<time && time<=15 && T<=2), take transition Kim.Aalborg->Kim.Bike { 1, tau, T := 0 }
+When you are in (3<time && time<=9 && T<=2), take transition Kim.Aalborg->Kim.Train { 1, tau, T := 0 }
+
+State: ( Kim.GoBack ) retry=1 
+When you are in (time<=15 && T<=2 && T-time<-3), take transition Kim.GoBack->Kim.Aalborg { 1, tau, 1 }
+
+State: ( Kim.Bike ) retry=0 
+While you are in	(time-T<=2 && T<=45 && T<=time), wait.
+
+State: ( Kim.Aalborg ) retry=0 
+When you are in (time<=2 && T<=2), take transition Kim.Aalborg->Kim.Bike { 1, tau, T := 0 }
+When you are in (time<=2 && T<=2), take transition Kim.Aalborg->Kim.Train { 1, tau, T := 0 }
+
+State: ( Kim.Easy ) retry=0 
+While you are in	(time-T<=2 && T<=20 && T<=time), wait.
+
+State: ( Kim.Wait ) retry=0 
+When you are in (3<time && time<=15 && T<=2), take transition Kim.Wait->Kim.GoBack { 1, tau, T := 0, retry := 1 }
+When you are in (3<time && time<=9 && T<=2), take transition Kim.Wait->Kim.Train { 1, tau, T := 0 }

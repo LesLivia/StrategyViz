@@ -1,0 +1,66 @@
+{"version":1.0,"type":"state->regressor","representation":"map","actions":{
+		"0":"Kim.GoBack->Kim.Aalborg { 1, tau, 1 }",
+		"1":"Kim.Wait->Kim.GoBack { 1, tau, T := 0, retry := 1 }",
+		"2":"Kim.Wait->Kim.Train { 1, tau, T := 0 }",
+		"3":"Kim.Aalborg->Kim.Train { 1, tau, T := 0 }",
+		"4":"Kim.Aalborg->Kim.Bike { 1, tau, T := 0 }",
+		"5":"Kim.Aalborg->Kim.Car { 1, tau, T := 0 }",
+		"6":"WAIT"
+	},"statevars":[
+		"Kim.location",
+		"retry"
+	],"pointvars":[
+		"#t(0)",
+		"#time",
+		"time",
+		"T"
+	],"locationnames":{
+		"Kim.location":{
+			"0":"GoBack",
+			"1":"Go",
+			"2":"Heavy",
+			"3":"Easy",
+			"4":"Sydney",
+			"5":"Wait",
+			"6":"Bike",
+			"7":"Train",
+			"8":"Car",
+			"9":"Aalborg"
+		}
+	},"regressors":{
+		"(5,1)":
+			{"type":"act->point->val","representation":"simpletree","minimize":1,"regressor":
+				{
+					"1":
+						19.18006795050815
+				}
+			},
+		"(5,0)":
+			{"type":"act->point->val","representation":"simpletree","minimize":1,"regressor":
+				{
+					"1":
+						26.17613141372014,
+					"2":
+						24.0438125853677
+				}
+			},
+		"(9,1)":
+			{"type":"act->point->val","representation":"simpletree","minimize":1,"regressor":
+				{
+					"3":
+						27.03583327009965,
+					"4":
+						43.90335955866631
+				}
+			},
+		"(9,0)":
+			{"type":"act->point->val","representation":"simpletree","minimize":1,"regressor":
+				{
+					"3":
+						26.01254025863685,
+					"4":
+						43.33831011984243
+				}
+			}
+	}
+}
