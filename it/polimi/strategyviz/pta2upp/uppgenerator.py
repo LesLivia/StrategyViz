@@ -112,7 +112,7 @@ def to_uppaal_model(pta: PTA):
                                    {'kind': 'guard', 'x': str(labels_pos[0]), 'y': str(labels_pos[1])})
         new_guard.text = e.guard.replace('<-', '< -')
         new_sync = cet.SubElement(new_edge, 'label',
-                                  {'kind': 'sync', 'x': str(labels_pos[0]), 'y': str(labels_pos[1])})
+                                  {'kind': 'synchronisation', 'x': str(labels_pos[0]), 'y': str(labels_pos[1])})
         new_sync.text = e.sync
         new_update = cet.SubElement(new_edge, 'label',
                                     {'kind': 'assignment', 'x': str(labels_pos[0]), 'y': str(labels_pos[1])})

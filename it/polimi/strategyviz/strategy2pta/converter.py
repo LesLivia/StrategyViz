@@ -107,6 +107,7 @@ def convert():
         optimized_strategy = parse_optimized_strategy(sys.argv[2], data)
 
     final_pta = optimized_strategy.refine_pta(tiga_strategy_pta)
+    # final_pta = tiga_strategy_pta
     try:
         final_pta = clean_pta(final_pta)
     except IndexError:
