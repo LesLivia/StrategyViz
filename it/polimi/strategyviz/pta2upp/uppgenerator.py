@@ -25,7 +25,7 @@ def get_new_coord(x: int, y: int):
 
 
 def to_uppaal_model(pta: PTA):
-    if len(sys.argv) < 4:
+    if len(sys.argv) < 3:
         LOGGER.error("Wrong input parameters.")
         raise RuntimeError
 

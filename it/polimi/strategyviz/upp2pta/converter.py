@@ -59,6 +59,11 @@ def parse_edges(tplt: Element, locations, bps):
     edges = []
 
     for trans in tplt.iter('transition'):
+        try:
+            controllable = False if trans.attrib['controllable'] == 'false' else True
+        except KeyError:
+            controllable = True
+
         source_id = trans.find('source').attrib['ref']
         target_id = trans.find('target').attrib['ref']
         guard = ''
@@ -84,13 +89,13 @@ def parse_edges(tplt: Element, locations, bps):
         except KeyError:
             target = list(filter(lambda b: b.id == target_id, bps))[0]
 
-        edges.append(Edge(guard, sync, update, source, target, weight))
+        edges.append(Edge(guard, sync, update, source, target, weight, controllable))
 
     return edges
 
 
 def parse_uppaal_model(view=False):
-    if len(sys.argv) < 4:
+    if len(sys.argv) < 3:
         LOGGER.error("Wrong input parameters.")
         raise RuntimeError
 

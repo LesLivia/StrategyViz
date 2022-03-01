@@ -34,12 +34,3 @@ g.add(c)
 print(split_solve(g).as_expr())
 for sg in split_solve(g):
     print(sg.as_expr())
-#
-# c = Or(And(x >= 0, x < 1), And(x >= 1, x < 2), And(x >= 2, x < 3))
-# g = Goal()
-# g.add(c)
-# print(split_solve(g).as_expr())
-# for sg in split_solve(g):
-#     print(sg.as_expr())
-
-# help_simplify()

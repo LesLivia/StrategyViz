@@ -200,6 +200,21 @@ class TigaStrategy:
                 new_guard = new_guard + e.guard
                 edges.add(Edge(new_guard, e.sync, e.update, curr_loc, Location(e.next_state.locs)))
 
+        for other_l in network[0].locations:
+            if other_l not in locations:
+                for other_e in network[0].edges:
+                    if other_l.label in [other_e.start.label, other_e.end.label]:
+                        if other_e.controllable:
+                            continue
+                        else:
+                            locations.add(other_l)
+                            edges.add(other_e)
+
+        for other_e in network[0].edges:
+            if not other_e.controllable and other_e not in edges \
+                    and other_e.start in locations and other_e.end in locations:
+                edges.add(other_e)
+
         # TODO Clearly, it only works if there is only one pta in the network
         # (or, at least, if there is only one with controllable edges)
         bps_ids = [bp.label for bp in network[0].branchpoints]

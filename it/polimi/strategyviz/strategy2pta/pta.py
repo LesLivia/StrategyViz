@@ -1,5 +1,4 @@
 import configparser
-import sys
 from typing import List
 
 from graphviz import Digraph
@@ -95,7 +94,8 @@ class Location:
 
 
 class Edge:
-    def __init__(self, guard: str, sync: str, update: str, start, end, weight: str = None):
+    def __init__(self, guard: str, sync: str, update: str, start, end,
+                 weight: str = None, controllable: bool = False):
         guard = guard.replace('(', '').replace(')', '').replace(' && ', ' &&\n')
         self.guard = guard
         self.sync = sync
@@ -103,6 +103,7 @@ class Edge:
         self.start = start
         self.end = end
         self.weight = weight
+        self.controllable = controllable
 
     def __str__(self):
         return self.guard + ' ' + self.sync + ' { ' + self.update + ' } ' + self.start.label + '->' + self.end.label

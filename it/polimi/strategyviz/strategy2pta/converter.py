@@ -46,7 +46,7 @@ def clean_pta(pta: PTA):
 
     # cleans unconnected locations
     unconnected_locs = set([])
-    for l in pta.locations:
+    for l in pta.locations + pta.branchpoints:
         if not connected_to_root(pta, l, []):
             unconnected_locs.add(l)
 
@@ -78,7 +78,7 @@ def clean_pta(pta: PTA):
 
 
 def convert():
-    if len(sys.argv) < 4:
+    if len(sys.argv) < 3:
         LOGGER.error('Not enough input parameters.')
         raise RuntimeError
 
