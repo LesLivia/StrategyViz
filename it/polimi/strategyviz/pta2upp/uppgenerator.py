@@ -65,8 +65,9 @@ def to_uppaal_model(pta: PTA):
     new_template = cet.SubElement(new_root, 'template')
     new_tplt_name = cet.SubElement(new_template, 'name', {'x': '9', 'y': '9'})
     new_tplt_name.text = pta.name.split('_')[-1]
-    new_declarations = cet.SubElement(new_template, 'declaration')
-    new_declarations.text = pta_local_content
+    # ADD LOCAL DECLARATIONS
+    new_declaration = cet.SubElement(new_template, 'declaration')
+    new_declaration.text = pta.declarations
 
     # ADD LOCATIONS
     init_id = ''

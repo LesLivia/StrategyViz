@@ -133,11 +133,13 @@ class BranchPoint:
 
 
 class PTA:
-    def __init__(self, name: str, locs: List[Location], edges: List[Edge], bps: List[BranchPoint] = None):
+    def __init__(self, name: str, locs: List[Location], edges: List[Edge], bps: List[BranchPoint] = None,
+                 declarations: str = ''):
         self.name = name
         self.locations = locs
         self.edges = edges
         self.branchpoints = bps if bps is not None else []
+        self.declarations = declarations
 
     @staticmethod
     def fix_label_for_html(s: str, color=None):

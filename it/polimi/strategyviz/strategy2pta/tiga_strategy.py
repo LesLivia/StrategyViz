@@ -221,7 +221,7 @@ class TigaStrategy:
         edges_from_bps = list(filter(lambda e: e.start.label in bps_ids, network[0].edges))
         edges.update(edges_from_bps)
 
-        pta = PTA(self.name, list(locations), list(edges), network[0].branchpoints)
+        pta = PTA(self.name, list(locations), list(edges), network[0].branchpoints, network[0].declarations)
 
         if view:
             pta.plot()

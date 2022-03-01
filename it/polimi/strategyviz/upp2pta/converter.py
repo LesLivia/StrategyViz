@@ -114,11 +114,16 @@ def parse_uppaal_model(view=False):
         initial_id = tplt.find('init').attrib['ref']
 
         for instance in pta_names:
+            try:
+                local_declaration = tplt.find('declaration').text
+            except AttributeError:
+                local_declaration = ''
+
             locations = parse_locations(tplt, instance, initial_id)
             bps = parse_branchpoints(tplt)
             edges = parse_edges(tplt, locations, bps)
 
-            PTAS.append(PTA(instance, list(locations.values()), edges, bps))
+            PTAS.append(PTA(instance, list(locations.values()), edges, bps, local_declaration))
 
     if view:
         [pta.plot() for pta in PTAS]

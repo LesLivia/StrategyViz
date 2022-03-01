@@ -72,7 +72,7 @@ def clean_pta(pta: PTA):
     # cleans breakpoints
     new_bps = list(set(pta.branchpoints) - set(unconnected_locs))
 
-    new_pta = PTA('trimmed_' + pta.name, new_locs, new_edges, new_bps)
+    new_pta = PTA('trimmed_' + pta.name, new_locs, new_edges, new_bps, pta.declarations)
 
     return new_pta
 
