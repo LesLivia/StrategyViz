@@ -83,8 +83,12 @@ def convert():
         raise RuntimeError
 
     STRATEGIES_PATH = config['STRATEGY CONFIGURATION']['STRATEGY_PATH']
-    TIGA_PATH = STRATEGIES_PATH + sys.argv[1] + config['STRATEGY CONFIGURATION']['TIGA_EXT']
-    STRATEGO_PATH = STRATEGIES_PATH + sys.argv[2] + config['STRATEGY CONFIGURATION']['STRATEGO_EXT']
+    TIGA_PATH = STRATEGIES_PATH + sys.argv[2] + config['STRATEGY CONFIGURATION']['TIGA_EXT']
+    # optimized strategy is an optional parameter
+    if len(sys.argv) >= 4:
+        STRATEGO_PATH = STRATEGIES_PATH + sys.argv[3] + config['STRATEGY CONFIGURATION']['STRATEGO_EXT']
+    else:
+        STRATEGO_PATH = None
 
     LOGGER.info("Parsing TIGA strategy...")
     with open(TIGA_PATH) as tiga_strategy_file:
@@ -100,14 +104,19 @@ def convert():
 
     LOGGER.msg("TIGA strategy successfully parsed.")
 
-    LOGGER.info("Parsing optimized strategy...")
+    # if the path to an optimized strategy has been given as input,
+    # use it to refine the TIGA strategy
+    if STRATEGO_PATH is not None:
+        LOGGER.info("Parsing optimized strategy...")
 
-    with open(STRATEGO_PATH) as opt_strategy_file:
-        data: str = opt_strategy_file.read()
-        optimized_strategy = parse_optimized_strategy(sys.argv[2], data)
+        with open(STRATEGO_PATH) as opt_strategy_file:
+            data: str = opt_strategy_file.read()
+            optimized_strategy = parse_optimized_strategy(sys.argv[3], data)
 
-    final_pta = optimized_strategy.refine_pta(tiga_strategy_pta)
-    # final_pta = tiga_strategy_pta
+        final_pta = optimized_strategy.refine_pta(tiga_strategy_pta)
+    else:
+        final_pta = tiga_strategy_pta
+
     try:
         final_pta = clean_pta(final_pta)
     except IndexError:

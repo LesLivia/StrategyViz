@@ -23,6 +23,14 @@ def parse_locations(tplt: Element, pta_name: str, initial_id: str):
             loc_label = node.find('name').text
         except AttributeError:
             loc_label = loc_id
+
+        if node.find('urgent') is not None:
+            urgency = 1
+        elif node.find('committed') is not None:
+            urgency = 2
+        else:
+            urgency = 0
+
         try:
             loc_labels = node.iter('label')
             loc_invariant = ''
@@ -33,7 +41,7 @@ def parse_locations(tplt: Element, pta_name: str, initial_id: str):
             loc_invariant = None
 
         net_locs: List[NetLocation] = [NetLocation(pta_name, loc_label)]
-        locations[loc_id] = Location(net_locs, initial_id == loc_id, invariant=loc_invariant)
+        locations[loc_id] = Location(net_locs, initial_id == loc_id, invariant=loc_invariant, urgent=urgency)
 
     return locations
 
@@ -86,7 +94,7 @@ def parse_uppaal_model(view=False):
         LOGGER.error("Wrong input parameters.")
         raise RuntimeError
 
-    MODEL_NAME = sys.argv[3]
+    MODEL_NAME = sys.argv[1]
     MODEL_PATH = config['MODEL CONFIGURATION']['MODEL_PATH'] + MODEL_NAME + config['MODEL CONFIGURATION']['MODEL_EXT']
 
     PTAS = []

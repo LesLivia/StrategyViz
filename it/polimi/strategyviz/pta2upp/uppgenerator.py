@@ -29,7 +29,7 @@ def to_uppaal_model(pta: PTA):
         LOGGER.error("Wrong input parameters.")
         raise RuntimeError
 
-    MODEL_NAME = sys.argv[3]
+    MODEL_NAME = sys.argv[1]
     MODEL_PATH = config['MODEL CONFIGURATION']['MODEL_PATH'] + MODEL_NAME + config['MODEL CONFIGURATION']['MODEL_EXT']
 
     tree = et.parse(MODEL_PATH)
@@ -85,6 +85,11 @@ def to_uppaal_model(pta: PTA):
         new_name.text = l.label.split('.')[-1]
         new_invariant = cet.SubElement(new_loc, 'label', {'kind': 'invariant', 'x': str(x), 'y': str(y - 15)})
         new_invariant.text = l.invariant
+
+        if l.urgent > 0:
+            new_urgency_label = 'urgent' if l.urgent == 1 else 'committed'
+            new_urgency = cet.SubElement(new_loc, new_urgency_label)
+
         if l.initial:
             init_id = new_id
 
@@ -141,4 +146,4 @@ def to_uppaal_model(pta: PTA):
     new_tree = cet.ElementTree(new_root)
 
     OUT_PATH = config['MODEL CONFIGURATION']['MODEL_OUT_PATH']
-    new_tree.write(OUT_PATH + sys.argv[3] + '_optimized.xml')
+    new_tree.write(OUT_PATH + sys.argv[1] + '_optimized.xml')
