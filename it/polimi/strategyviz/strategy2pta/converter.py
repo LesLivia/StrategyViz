@@ -7,6 +7,7 @@ from it.polimi.strategyviz.strategy2pta.stratego_parser import parse_optimized_s
 from it.polimi.strategyviz.strategy2pta.tigaparser import parse_tiga_strategy, TigaStrategy
 from it.polimi.strategyviz.upp2pta.converter import parse_uppaal_model
 from it.polimi.strategyviz.viz_logging.logger import Logger
+from it.polimi.strategyviz.z3gen.z3constrgenerator import guards2singleconstr
 
 config = configparser.ConfigParser()
 config.sections()
@@ -121,6 +122,7 @@ def convert():
         final_pta = clean_pta(final_pta)
     except IndexError:
         LOGGER.error("An error occurred while trimming the PTA.")
+    final_pta.combine_edges()
     final_pta.plot()
 
     LOGGER.msg("Stratego strategy successfully parsed.")

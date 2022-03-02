@@ -5,11 +5,11 @@ The repository contains a software tool to extract strategies generated through 
 them into Probabilitic Timed Automata (PTA). The tool processes both pure [TIGA][tiga]-style strategies and TIGA
 strategies optimized through Stratego.
 
-The tool returns the original [Uppaal][uppaal] model (i.e., a PTA network) with all *controllable* edges replaced with *
-uncontrollable* ones with guard conditions calculated by the strategy.
+The tool returns the original [Uppaal][uppaal] model (i.e., a PTA network) modified so that all *controllable* edges are
+replaced by *uncontrollable* ones with guards calculated by the strategy.
 
-**Note:** The tool has been tested on macOS 10.15.7 and Uppaal Stratego 9. Should you succeed in running the tool in a different
-environment or run into any issue throughout the process, please reach out to the author.
+**Note:** The tool has been tested on macOS 10.15.7 and Uppaal Stratego 9. Should you succeed in running the tool in a
+different environment or run into any issue throughout the process, please reach out to the author.
 
 Authors:
 
@@ -21,8 +21,7 @@ Configuration File Setup
 -----------
 
 The tool requires a [configuration file](resources/config/config.ini) whose content must be adjusted to match your
-environment.
-Make sure that the following properties match your environment:
+environment. Make sure that the following properties match your environment:
 
 - **MODEL_PATH** is the path to the original Uppaal Stratego .xml model file
 
@@ -40,11 +39,12 @@ Add the repo path to your Python path (fixes ModuleNotFoundError while trying to
 Main Script's Input Parameters
 -----------
 
-Run the main script specifying: 
-- the name of the TIGA strategy to convert (e.g., [gosafe](resources/strategies/gosafe.txt))
-- the name of the optimized strategy that refines the first one (e.g., [gofastsafe](resources/strategies/gofastsafe.json))
-- the name of the original .xml Uppaal file
+Run the main script specifying:
 
+- the name of the TIGA strategy to convert (e.g., [gosafe](resources/strategies/gosafe.txt))
+- the name of the optimized strategy that refines the first one (
+  e.g., [gofastsafe](resources/strategies/gofastsafe.json))
+- the name of the original .xml Uppaal file
 
 	python3 $REPO_PATH/it/polimi/strategyviz/main.py $TIGA_STRATEGY $OPT_STRATEGY $MODEL
 
