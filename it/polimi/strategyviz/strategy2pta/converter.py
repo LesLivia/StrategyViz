@@ -122,7 +122,8 @@ def convert():
         final_pta = clean_pta(final_pta)
     except IndexError:
         LOGGER.error("An error occurred while trimming the PTA.")
-    final_pta.combine_edges()
+    final_pta.equalities2intervals()
+    # final_pta.combine_edges()
     final_pta.plot()
 
     LOGGER.msg("Stratego strategy successfully parsed.")

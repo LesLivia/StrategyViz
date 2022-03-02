@@ -1,7 +1,9 @@
 import configparser
+import math
 from typing import List
 
 from graphviz import Digraph
+from tqdm import tqdm
 
 from it.polimi.strategyviz.viz_logging.logger import Logger
 from it.polimi.strategyviz.z3gen.z3constrgenerator import guards2singleconstr
@@ -204,12 +206,43 @@ class PTA:
         OUT_PATH = config['PTA CONFIGURATION']['SAVE_PATH']
         self.to_digraph().render(directory=OUT_PATH, view=True)
 
+    @staticmethod
+    def get_interval(tup):
+        # FIXME
+        T = 20
+        if tup[0] in ['h_dd', 'r_dd']:
+            return int(tup[1]) - T / 2, int(tup[1]) + T / 2
+        else:
+            return int(tup[1]) - (100 * (1 - math.exp(-0.005 * T / 2))), int(tup[1]) + (
+                    100 * (1 - math.exp(-0.005 * T / 2)))
+
+    def equalities2intervals(self):
+        LOGGER.msg('Converting equality constraints to intervals...')
+        for e in tqdm(self.edges):
+            equalities = [c.replace('\n', '') for c in e.guard.split('&&') if c.__contains__('==')]
+            inequalities = [c for c in e.guard.split('&&') if not c.__contains__('==')]
+            elems = [(eq.split('==')[0], eq.split('==')[1]) for eq in equalities]
+            new_guard = ''
+            for i, tup in enumerate(elems):
+                # FIXME
+                if tup[0] in ['h_dd', 'h_df', 'r_dd']:
+                    interval = PTA.get_interval(tup)
+                    new_guard += '({}<={}&&{}<={})\n'.format(interval[0], tup[0], tup[0], interval[1])
+                else:
+                    new_guard += '({}=={})\n'.format(tup[0], tup[1])
+                if i < len(elems) - 1:
+                    new_guard += '&&'
+            if len(inequalities) > 0:
+                new_guard += '&&' + '&&'.join(inequalities) if new_guard != '' else '&&'.join(inequalities)
+            e.guard = new_guard
+
     def combine_edges(self):
-        #TODO: needs refinement
+        LOGGER.msg('Combining edges...')
+        # TODO: needs refinement
         already_processed = []
         old_edges = self.edges.copy()
         new_edges = []
-        for i, edge in enumerate(self.edges):
+        for i, edge in tqdm(enumerate(self.edges)):
             if i in already_processed:
                 continue
             eq_edges = []
