@@ -1,5 +1,6 @@
 import configparser
 import sys
+import time
 from typing import List
 
 from it.polimi.strategyviz.strategy2pta.pta import PTA, Location
@@ -82,6 +83,7 @@ def convert():
         LOGGER.error('Not enough input parameters.')
         raise RuntimeError
 
+    start_ts = time.time()
     STRATEGIES_PATH = config['STRATEGY CONFIGURATION']['STRATEGY_PATH']
     TIGA_PATH = STRATEGIES_PATH + sys.argv[2] + config['STRATEGY CONFIGURATION']['TIGA_EXT']
     # optimized strategy is an optional parameter
@@ -99,14 +101,17 @@ def convert():
         LOGGER.msg("TIGA strategy successfully parsed.")
         try:
             pass
-            tiga_strategy_pta = clean_pta(tiga_strategy_pta)
+            # tiga_strategy_pta = clean_pta(tiga_strategy_pta)
         except IndexError:
             LOGGER.error("An error occurred while trimming the PTA.")
         tiga_strategy_pta.plot()
+    end_ts = time.time()
+    LOGGER.msg("TA extraction from TIGA strategy took {:.2f}s.".format(end_ts - start_ts))
 
     # if the path to an optimized strategy has been specified,
     # use it to refine the TIGA strategy
     if STRATEGO_PATH is not None:
+        start_ts = time.time()
         LOGGER.info("Parsing optimized strategy...")
 
         with open(STRATEGO_PATH) as opt_strategy_file:
@@ -114,15 +119,19 @@ def convert():
             optimized_strategy = parse_optimized_strategy(sys.argv[3], data)
 
         final_pta = optimized_strategy.refine_pta(tiga_strategy_pta)
-        LOGGER.msg("Stratego strategy successfully parsed.")
+        LOGGER.msg("Optimized strategy successfully parsed.")
     else:
         final_pta = tiga_strategy_pta
 
     try:
         pass
-        final_pta = clean_pta(final_pta)
+        # final_pta = clean_pta(final_pta)
     except IndexError:
         LOGGER.error("An error occurred while trimming the PTA.")
+
+    end_ts = time.time()
+    LOGGER.msg("PTA extraction from optimized strategy took {:.2f}s.".format(end_ts - start_ts))
+
     final_pta.equalities2intervals()
     # final_pta.combine_edges()
     final_pta.plot()

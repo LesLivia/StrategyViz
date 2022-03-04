@@ -56,7 +56,7 @@ class Regressor:
                 # and values=list actions with such weight
                 # the list is necessary in case multiple actions have the same weight
                 try:
-                    weights[float(d['regressor'][a])] += actions[a]
+                    weights[float(d['regressor'][a])].append(actions[a])
                 except KeyError:
                     weights[float(d['regressor'][a])] = [actions[a]]
             # TODO: what does it mean when an action is not event part of the regressor?

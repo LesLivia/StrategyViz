@@ -1,7 +1,6 @@
-import sys
-from enum import Enum
 import configparser
 from datetime import datetime
+from enum import Enum
 
 config = configparser.ConfigParser()
 config.sections()
@@ -76,15 +75,16 @@ class Logger:
 
     def info(self, msg):
         if MIN_LOG_LEVEL <= LogLevel.INFO.value:
-            print(bcolors.OKBLUE + self.format.format(self.speaker, datetime.now(), str(LogLevel.INFO), msg), end='')
+            print(bcolors.OKCYAN + self.format.format(self.speaker, datetime.now(), str(LogLevel.INFO), msg), end='')
 
     def debug(self, msg):
         if MIN_LOG_LEVEL <= LogLevel.DEBUG.value:
-            print(self.format.format(self.speaker, datetime.now(), str(LogLevel.DEBUG), msg), end='')
+            print(bcolors.OKBLUE + self.format.format(self.speaker, datetime.now(), str(LogLevel.DEBUG), msg), end='')
 
     def warn(self, msg):
         if MIN_LOG_LEVEL <= LogLevel.WARNING.value:
-            print(self.format.format(self.speaker, datetime.now(), str(LogLevel.WARNING), msg), end='')
+            print(bcolors.WARNING + self.format.format(self.speaker, datetime.now(), str(LogLevel.WARNING), msg),
+                  end='')
 
     def error(self, msg):
         if MIN_LOG_LEVEL <= LogLevel.ERROR.value:
