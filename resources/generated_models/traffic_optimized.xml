@@ -68,30 +68,30 @@ strategies are not guaranteed to be safe.</label></transition><transition id="id
 			<source ref="id9" /><target ref="id7" /><label kind="assignment" x="-93" y="0">T=0</label></transition><transition id="id26">
 			<source ref="id9" /><target ref="id6" /><label kind="assignment" x="-102" y="-144">T=0</label><nail x="-119" y="-42" /></transition><transition id="id27">
 			<source ref="id9" /><target ref="id8" /><label kind="assignment" x="-93" y="-51">T=0</label></transition></template><template><name x="9" y="9">gosafe</name><declaration>// Place local declarations here.
-</declaration><location id="id0" x="100" y="0"><name x="100" y="-10">Go</name><label kind="invariant" x="100" y="-15">T&lt;=35</label></location><location id="id1" x="200" y="0"><name x="200" y="-10">GoBack</name><label kind="invariant" x="200" y="-15" /><urgent /></location><location id="id2" x="300" y="0"><name x="300" y="-10">Aalborg</name><label kind="invariant" x="300" y="-15">T&lt;=2</label></location><location id="id3" x="400" y="0"><name x="400" y="-10">Wait</name><label kind="invariant" x="400" y="-15">T&lt;=2</label></location><location id="id4" x="500" y="0"><name x="500" y="-10">Train</name><label kind="invariant" x="500" y="-15">T&lt;=6</label></location><location id="id5" x="0" y="100"><name x="0" y="90">Sydney</name><label kind="invariant" x="0" y="85">trip'==0</label></location><branchpoint id="id6" x="100" y="100" /><init ref="id2" /><transition id="id7" controllable="false"><source ref="id4" /><target ref="id6" /><label kind="guard" x="-200.0" y="50.0">T&gt;3</label><label kind="synchronisation" x="-200.0" y="50.0" /><label kind="assignment" x="-200.0" y="50.0">T=0</label></transition><transition id="id8" controllable="false"><source ref="id3" /><target ref="id1" /><label kind="guard" x="-100.0" y="0.0">(retry==1)
+</declaration><location id="id0" x="100" y="0"><name x="100" y="-10">Train</name><label kind="invariant" x="100" y="-15">T&lt;=6</label></location><location id="id1" x="200" y="0"><name x="200" y="-10">Wait</name><label kind="invariant" x="200" y="-15">T&lt;=2</label></location><location id="id2" x="300" y="0"><name x="300" y="-10">Aalborg</name><label kind="invariant" x="300" y="-15">T&lt;=2</label></location><location id="id3" x="400" y="0"><name x="400" y="-10">Go</name><label kind="invariant" x="400" y="-15">T&lt;=35</label></location><location id="id4" x="500" y="0"><name x="500" y="-10">Sydney</name><label kind="invariant" x="500" y="-15">trip'==0</label></location><location id="id5" x="0" y="100"><name x="0" y="90">GoBack</name><label kind="invariant" x="0" y="85" /><urgent /></location><branchpoint id="id6" x="100" y="100" /><init ref="id2" /><transition id="id7" controllable="false"><source ref="id2" /><target ref="id0" /><label kind="guard" x="-100.0" y="0.0">(retry==0)
 &amp;&amp;
-6&lt;time &amp;&amp;
-time&lt;=15 &amp;&amp;
-T&lt;=2</label><label kind="synchronisation" x="-100.0" y="0.0" /><label kind="assignment" x="-100.0" y="0.0"> T := 0, retry := 1
-</label></transition><transition id="id9" controllable="false"><source ref="id0" /><target ref="id5" /><label kind="guard" x="-50.0" y="50.0" /><label kind="synchronisation" x="-50.0" y="50.0" /><label kind="assignment" x="-50.0" y="50.0" /></transition><transition id="id10" controllable="false"><source ref="id2" /><target ref="id4" /><label kind="guard" x="100.0" y="0.0">(retry==1)
+time&lt;=2 &amp;&amp;
+T&lt;=2</label><label kind="synchronisation" x="-100.0" y="0.0" /><label kind="assignment" x="-100.0" y="0.0"> T := 0
+</label></transition><transition id="id8" controllable="false"><source ref="id6" /><target ref="id3" /><label kind="guard" x="150.0" y="-50.0" /><label kind="synchronisation" x="150.0" y="-50.0" /><label kind="assignment" x="150.0" y="-50.0" /><label kind="probability" x="150.0" y="-50.0">10</label></transition><transition id="id9" controllable="false"><source ref="id2" /><target ref="id0" /><label kind="guard" x="-100.0" y="0.0">(retry==1)
 &amp;&amp;
 3&lt;time &amp;&amp;
 time&lt;=9 &amp;&amp;
-T&lt;=2</label><label kind="synchronisation" x="100.0" y="0.0" /><label kind="assignment" x="100.0" y="0.0"> T := 0
-</label></transition><transition id="id11" controllable="false"><source ref="id1" /><target ref="id2" /><label kind="guard" x="50.0" y="0.0">(retry==1)
+T&lt;=2</label><label kind="synchronisation" x="-100.0" y="0.0" /><label kind="assignment" x="-100.0" y="0.0"> T := 0
+</label></transition><transition id="id10" controllable="false"><source ref="id1" /><target ref="id0" /><label kind="guard" x="-50.0" y="0.0">(retry==0)
+&amp;&amp;
+3&lt;time &amp;&amp;
+time&lt;=9 &amp;&amp;
+T&lt;=2</label><label kind="synchronisation" x="-50.0" y="0.0" /><label kind="assignment" x="-50.0" y="0.0"> T := 0
+</label></transition><transition id="id11" controllable="false"><source ref="id0" /><target ref="id6" /><label kind="guard" x="0.0" y="50.0">T&gt;3</label><label kind="synchronisation" x="0.0" y="50.0" /><label kind="assignment" x="0.0" y="50.0">T=0</label></transition><transition id="id12" controllable="false"><source ref="id3" /><target ref="id4" /><label kind="guard" x="50.0" y="0.0" /><label kind="synchronisation" x="50.0" y="0.0" /><label kind="assignment" x="50.0" y="0.0" /></transition><transition id="id13" controllable="false"><source ref="id5" /><target ref="id2" /><label kind="guard" x="150.0" y="-50.0">(retry==1)
 &amp;&amp;
 time&lt;=15 &amp;&amp;
 T&lt;=2 &amp;&amp;
-T-time&lt; -3</label><label kind="synchronisation" x="50.0" y="0.0" /><label kind="assignment" x="50.0" y="0.0" /></transition><transition id="id12" controllable="false"><source ref="id6" /><target ref="id0" /><label kind="guard" x="0.0" y="-50.0" /><label kind="synchronisation" x="0.0" y="-50.0" /><label kind="assignment" x="0.0" y="-50.0" /><label kind="probability" x="0.0" y="-50.0">10</label></transition><transition id="id13" controllable="false"><source ref="id3" /><target ref="id4" /><label kind="guard" x="50.0" y="0.0">(retry==0)
+T-time&lt; -3</label><label kind="synchronisation" x="150.0" y="-50.0" /><label kind="assignment" x="150.0" y="-50.0" /></transition><transition id="id14" controllable="false"><source ref="id1" /><target ref="id5" /><label kind="guard" x="-100.0" y="50.0">(retry==1)
 &amp;&amp;
-3&lt;time &amp;&amp;
-time&lt;=9 &amp;&amp;
-T&lt;=2</label><label kind="synchronisation" x="50.0" y="0.0" /><label kind="assignment" x="50.0" y="0.0"> T := 0
-</label></transition><transition id="id14" controllable="false"><source ref="id2" /><target ref="id4" /><label kind="guard" x="100.0" y="0.0">(retry==0)
-&amp;&amp;
-time&lt;=2 &amp;&amp;
-T&lt;=2</label><label kind="synchronisation" x="100.0" y="0.0" /><label kind="assignment" x="100.0" y="0.0"> T := 0
-</label></transition><transition id="id15" controllable="false"><source ref="id6" /><target ref="id3" /><label kind="guard" x="150.0" y="-50.0" /><label kind="synchronisation" x="150.0" y="-50.0" /><label kind="assignment" x="150.0" y="-50.0" /><label kind="probability" x="150.0" y="-50.0">1</label></transition></template><system>Kim = Traveler();
+6&lt;time &amp;&amp;
+time&lt;=15 &amp;&amp;
+T&lt;=2</label><label kind="synchronisation" x="-100.0" y="50.0" /><label kind="assignment" x="-100.0" y="50.0"> T := 0, retry := 1
+</label></transition><transition id="id15" controllable="false"><source ref="id6" /><target ref="id1" /><label kind="guard" x="50.0" y="-50.0" /><label kind="synchronisation" x="50.0" y="-50.0" /><label kind="assignment" x="50.0" y="-50.0" /><label kind="probability" x="50.0" y="-50.0">1</label></transition></template><system>Kim = Traveler();
 system Kim;</system><queries><query>
 			<formula>//  VALIDATION queries</formula><comment> VALIDATION queries</comment></query><query>
 			<formula>simulate 1 [&lt;=100] {

@@ -34,37 +34,46 @@ class OptimizedState:
 
 
 class Regressor:
-    def __init__(self, state: OptimizedState, minimize: bool, weights: Dict[str, float]):
+    def __init__(self, state: OptimizedState, best_actions: List[str]):
         self.state = state
-        self.minimize = minimize
-        self.weights = weights
+        self.best_actions = best_actions
 
     @staticmethod
     def parse(key: str, d: Dict, statevars: List[str], location_names: Dict, actions: Dict[str, str]):
         state = OptimizedState.parse(key, statevars, location_names)
 
         minimize = True if d['minimize'] == 1 else False
+        fun = min if minimize else max
 
-        weights: Dict[str, float] = {}
+        weights: Dict[float, List[str]] = dict()
         for a in actions:
             starting_loc = actions[a].split('->')
             if actions[a] == 'WAIT' or str(state.state.locs[0]) != starting_loc[0]:
                 continue
 
             if a in d['regressor']:
-                weights[actions[a]] = d['regressor'][a]
-            else:
-                weights[actions[a]] = None
+                # we build a dictionary with keys=weights in a regressor
+                # and values=list actions with such weight
+                # the list is necessary in case multiple actions have the same weight
+                try:
+                    weights[float(d['regressor'][a])] += actions[a]
+                except KeyError:
+                    weights[float(d['regressor'][a])] = [actions[a]]
+            # TODO: what does it mean when an action is not event part of the regressor?
 
-        return Regressor(state, minimize, weights)
+        best_weight = fun(weights.keys())
+
+        return Regressor(state, weights[best_weight])
 
     def __str__(self):
-        return str(self.state) + '\n' + str(self.minimize) + '\n' + str(self.weights)
+        return str(self.state)  # + '\n' + str(self.minimize) + '\n' + str(self.weights)
+
+    def __hash__(self):
+        return hash(str(self))
 
 
 class OptimizedStrategy:
-
-    def __init__(self, name: str, regressors: List[Regressor]):
+    def __init__(self, name: str, regressors: Dict[str, List[str]]):
         self.name = name
         self.regressors = regressors
 
@@ -74,18 +83,13 @@ class OptimizedStrategy:
         all_edges = len(pta.edges)
 
         edges_to_delete: List[Edge] = []
-        for reg in tqdm(self.regressors):
-            f = min if reg.minimize else max
-            best_weight = f([w for w in list(reg.weights.values()) if w is not None])
-            to_be_deleted = [e for e in list(reg.weights.keys())
-                             if reg.weights[e] is None or reg.weights[e] != best_weight]
-            to_be_deleted = [e.split(' {')[0].split('->')[1] for e in to_be_deleted]
-            curr_locs = '\n'.join([str(x) for x in reg.state.state.locs])
-            for e in pta.edges:
-                same_start = curr_locs == str(e.start)
-                same_end = str(e.end) in to_be_deleted
-                same_guard = all([e.guard.__contains__(str(v)) for v in reg.state.state.vars])
-                if same_start and same_end and same_guard:
+        for e in tqdm(pta.edges):
+            edge_key = str(e.start) + ', \n' + \
+                       ', '.join([x for x in e.guard.split('&&\n') if x.__contains__('==')]) + ', '
+            if edge_key in list(self.regressors.keys()):
+                best_actions = self.regressors[edge_key]
+                best_actions_dest = [a.split(' ')[0].split('->')[1] for a in best_actions]
+                if str(e.end) not in best_actions_dest:
                     edges_to_delete.append(e)
 
         pta.edges = list(set(pta.edges) - set(edges_to_delete))

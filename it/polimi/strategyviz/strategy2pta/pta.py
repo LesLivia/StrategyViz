@@ -184,6 +184,7 @@ class PTA:
         for i, e in enumerate(self.edges):
             # TODO: main issue, strategy explodes
             if i > 30:
+                LOGGER.warn('PTA partially plotted due to excessive size.')
                 break
 
             guard = PTA.fix_label_for_html(e.guard, GREEN)
@@ -217,7 +218,7 @@ class PTA:
                     100 * (1 - math.exp(-0.005 * T / 2)))
 
     def equalities2intervals(self):
-        LOGGER.msg('Converting equality constraints to intervals...')
+        LOGGER.info('Converting equality constraints to intervals...')
         for e in tqdm(self.edges):
             equalities = [c.replace('\n', '') for c in e.guard.split('&&') if c.__contains__('==')]
             inequalities = [c for c in e.guard.split('&&') if not c.__contains__('==')]
@@ -237,7 +238,7 @@ class PTA:
             e.guard = new_guard
 
     def combine_edges(self):
-        LOGGER.msg('Combining edges...')
+        LOGGER.info('Combining edges...')
         # TODO: needs refinement
         already_processed = []
         old_edges = self.edges.copy()

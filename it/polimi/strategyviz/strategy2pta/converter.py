@@ -7,7 +7,6 @@ from it.polimi.strategyviz.strategy2pta.stratego_parser import parse_optimized_s
 from it.polimi.strategyviz.strategy2pta.tigaparser import parse_tiga_strategy, TigaStrategy
 from it.polimi.strategyviz.upp2pta.converter import parse_uppaal_model
 from it.polimi.strategyviz.viz_logging.logger import Logger
-from it.polimi.strategyviz.z3gen.z3constrgenerator import guards2singleconstr
 
 config = configparser.ConfigParser()
 config.sections()
@@ -91,21 +90,21 @@ def convert():
     else:
         STRATEGO_PATH = None
 
-    LOGGER.info("Parsing TIGA strategy...")
     with open(TIGA_PATH) as tiga_strategy_file:
+        LOGGER.info("Parsing TIGA strategy...")
         lines = tiga_strategy_file.readlines()
         tiga_strategy: TigaStrategy = parse_tiga_strategy(sys.argv[2], lines)
-        network = parse_uppaal_model(view=False)
+        network = parse_uppaal_model(view=True)
         tiga_strategy_pta = tiga_strategy.to_pta(network, view=True)
+        LOGGER.msg("TIGA strategy successfully parsed.")
         try:
+            pass
             tiga_strategy_pta = clean_pta(tiga_strategy_pta)
         except IndexError:
             LOGGER.error("An error occurred while trimming the PTA.")
-        # tiga_strategy_pta.plot()
+        tiga_strategy_pta.plot()
 
-    LOGGER.msg("TIGA strategy successfully parsed.")
-
-    # if the path to an optimized strategy has been given as input,
+    # if the path to an optimized strategy has been specified,
     # use it to refine the TIGA strategy
     if STRATEGO_PATH is not None:
         LOGGER.info("Parsing optimized strategy...")
@@ -115,17 +114,17 @@ def convert():
             optimized_strategy = parse_optimized_strategy(sys.argv[3], data)
 
         final_pta = optimized_strategy.refine_pta(tiga_strategy_pta)
+        LOGGER.msg("Stratego strategy successfully parsed.")
     else:
         final_pta = tiga_strategy_pta
 
     try:
+        pass
         final_pta = clean_pta(final_pta)
     except IndexError:
         LOGGER.error("An error occurred while trimming the PTA.")
     final_pta.equalities2intervals()
     # final_pta.combine_edges()
     final_pta.plot()
-
-    LOGGER.msg("Stratego strategy successfully parsed.")
 
     return final_pta
