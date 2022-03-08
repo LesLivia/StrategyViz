@@ -17,7 +17,7 @@ def parse_tiga_strategy(name: str, file_content: List[str]):
     initial_vars = [StateVariable(s.split('=')[0], s.split('=')[1]) for s in initial_vars_str]
     initial_state = State(initial_locs, initial_vars)
 
-    start_index = file_content.index('Strategy to win:\n')
+    start_index = [i for i, line in enumerate(file_content) if line.__contains__('Strategy to')][0]
     block_lines = file_content[start_index + 1:]
     str_blocks = []
     for line in block_lines:

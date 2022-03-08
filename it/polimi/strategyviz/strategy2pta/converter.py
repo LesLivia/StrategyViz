@@ -1,7 +1,7 @@
 import configparser
 import sys
 import time
-from typing import List
+from typing import Set
 
 from it.polimi.strategyviz.strategy2pta.pta import PTA, Location
 from it.polimi.strategyviz.strategy2pta.stratego_parser import parse_optimized_strategy
@@ -17,19 +17,21 @@ config.sections()
 LOGGER = Logger('STRATEGY2PTA CONVERTER')
 
 
-def connected_to_root(pta: PTA, curr_loc: Location, already_checked: List[Location]):
-    already_checked.append(curr_loc)
+def connected_to_root(pta: PTA, curr_loc: Location, already_checked: Set[Location]):
+    already_checked.add(curr_loc)
     if curr_loc.kind == 'LOC' and curr_loc.initial:
         return True
     else:
         incoming_edges = list(filter(lambda e: e.end.label == curr_loc.label, pta.edges))
-        predecessors = [e.start for e in incoming_edges]
+        predecessors = set([e.start for e in incoming_edges])
+        to_add = set()
         for p in predecessors:
             if p.kind == 'BP':
                 edges_to_bp = list(filter(lambda e: e.end.label == p.label, pta.edges))
-                predecessors += [e.start for e in edges_to_bp]
-        predecessors = list(filter(lambda p: p.kind == 'LOC', predecessors))
-        predecessors = list(filter(lambda p: p not in already_checked, predecessors))
+                to_add.update(set([e.start for e in edges_to_bp]))
+        predecessors.update(to_add)
+        predecessors = set(filter(lambda p: p.kind == 'LOC', predecessors))
+        predecessors = set(filter(lambda p: p not in already_checked and p != curr_loc, predecessors))
         if len(predecessors) == 0:
             return False
         else:
@@ -46,9 +48,11 @@ def clean_pta(pta: PTA):
             e.end.initial = True
 
     # cleans unconnected locations
-    unconnected_locs = set([])
+    unconnected_locs = set()
+    checked_locs = set()
     for l in pta.locations + pta.branchpoints:
-        if not connected_to_root(pta, l, []):
+        checked_locs.add(l)
+        if not connected_to_root(pta, l, set()):
             unconnected_locs.add(l)
 
     unconnected_edges = list(filter(lambda e: (e.start in unconnected_locs) or
@@ -58,12 +62,13 @@ def clean_pta(pta: PTA):
     new_edges = list(set(pta.edges) - set(unconnected_edges))
     new_pta = PTA('trimmed_' + pta.name, new_locs, new_edges, pta.branchpoints)
 
+    edges_to_recheck = list(filter(lambda e: e.start not in checked_locs or e.end not in checked_locs, new_pta.edges))
     # cleans unconnected locations which are present only as edges start/end
-    for e in new_pta.edges:
-        if not connected_to_root(new_pta, e.start, []):
+    for e in edges_to_recheck:
+        if not connected_to_root(new_pta, e.start, set()):
             unconnected_locs.add(e.start)
             unconnected_edges.append(e)
-        if not connected_to_root(new_pta, e.end, []):
+        if not connected_to_root(new_pta, e.end, set()):
             unconnected_locs.add(e.end)
             unconnected_edges.append(e)
 
@@ -96,12 +101,11 @@ def convert():
         LOGGER.info("Parsing TIGA strategy...")
         lines = tiga_strategy_file.readlines()
         tiga_strategy: TigaStrategy = parse_tiga_strategy(sys.argv[2], lines)
-        network = parse_uppaal_model(view=True)
+        network = parse_uppaal_model(view=False)
         tiga_strategy_pta = tiga_strategy.to_pta(network, view=True)
         LOGGER.msg("TIGA strategy successfully parsed.")
         try:
-            pass
-            # tiga_strategy_pta = clean_pta(tiga_strategy_pta)
+            tiga_strategy_pta = clean_pta(tiga_strategy_pta)
         except IndexError:
             LOGGER.error("An error occurred while trimming the PTA.")
         tiga_strategy_pta.plot()
@@ -124,8 +128,7 @@ def convert():
         final_pta = tiga_strategy_pta
 
     try:
-        pass
-        # final_pta = clean_pta(final_pta)
+        final_pta = clean_pta(final_pta)
     except IndexError:
         LOGGER.error("An error occurred while trimming the PTA.")
 
