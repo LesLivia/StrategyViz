@@ -1,6 +1,6 @@
-from it.polimi.strategyviz.viz_logging.logger import Logger
-from it.polimi.strategyviz.strategy2pta.converter import convert
-from it.polimi.strategyviz.pta2upp.uppgenerator import to_uppaal_model
+from src.strategyviz.viz_logging.logger import Logger
+from src.strategyviz.strategy2pta.converter import convert
+from src.strategyviz.pta2upp.uppgenerator import to_uppaal_model
 
 LOGGER = Logger('MAIN')
 

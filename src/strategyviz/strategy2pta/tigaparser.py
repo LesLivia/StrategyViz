@@ -2,9 +2,9 @@ from typing import List
 
 from tqdm import tqdm
 
-from it.polimi.strategyviz.strategy2pta.pta import State, StateVariable, NetLocation
-from it.polimi.strategyviz.strategy2pta.tiga_strategy import TigaBlock, TigaStrategy
-from it.polimi.strategyviz.viz_logging.logger import Logger
+from src.strategyviz.strategy2pta.pta import State, StateVariable, NetLocation
+from src.strategyviz.strategy2pta.tiga_strategy import TigaBlock, TigaStrategy
+from src.strategyviz.viz_logging.logger import Logger
 
 LOGGER = Logger('TIGA PARSER')
 

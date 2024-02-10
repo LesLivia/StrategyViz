@@ -3,8 +3,8 @@ from typing import List, Dict
 
 from tqdm import tqdm
 
-from it.polimi.strategyviz.strategy2pta.opt_strategy import OptimizedStrategy, Regressor
-from it.polimi.strategyviz.viz_logging.logger import Logger
+from src.strategyviz.strategy2pta.opt_strategy import OptimizedStrategy, Regressor
+from src.strategyviz.viz_logging.logger import Logger
 
 LOGGER = Logger('STRATEGO PARSER')
 

@@ -2,8 +2,8 @@ from typing import Dict, List
 
 from tqdm import tqdm
 
-from it.polimi.strategyviz.strategy2pta.pta import State, NetLocation, StateVariable, PTA, Edge
-from it.polimi.strategyviz.viz_logging.logger import Logger
+from src.strategyviz.strategy2pta.pta import State, NetLocation, StateVariable, PTA, Edge
+from src.strategyviz.viz_logging.logger import Logger
 
 LOGGER = Logger('OPTIMIZED STRATEGY')
 

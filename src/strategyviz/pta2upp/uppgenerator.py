@@ -3,8 +3,8 @@ import sys
 import xml.etree.ElementTree as et
 import xml.etree.cElementTree as cet
 
-from it.polimi.strategyviz.strategy2pta.pta import PTA
-from it.polimi.strategyviz.viz_logging.logger import Logger
+from src.strategyviz.strategy2pta.pta import PTA
+from src.strategyviz.viz_logging.logger import Logger
 
 config = configparser.ConfigParser()
 config.sections()

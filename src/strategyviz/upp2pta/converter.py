@@ -4,8 +4,8 @@ import xml.etree.ElementTree as et
 from typing import List
 from xml.etree.ElementTree import Element
 
-from it.polimi.strategyviz.strategy2pta.pta import Location, NetLocation, PTA, Edge, BranchPoint
-from it.polimi.strategyviz.viz_logging.logger import Logger
+from src.strategyviz.strategy2pta.pta import Location, NetLocation, PTA, Edge, BranchPoint
+from src.strategyviz.viz_logging.logger import Logger
 
 LOGGER = Logger('UPPAAL2PTA CONVERTER')
 

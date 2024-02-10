@@ -5,8 +5,8 @@ from typing import List
 from graphviz import Digraph
 from tqdm import tqdm
 
-from it.polimi.strategyviz.viz_logging.logger import Logger
-from it.polimi.strategyviz.z3gen.z3constrgenerator import guards2singleconstr
+from src.strategyviz.viz_logging.logger import Logger
+from src.strategyviz.z3gen.z3constrgenerator import guards2singleconstr
 
 config = configparser.ConfigParser()
 config.sections()

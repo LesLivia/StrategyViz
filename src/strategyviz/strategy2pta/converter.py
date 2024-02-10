@@ -3,11 +3,11 @@ import sys
 import time
 from typing import Set
 
-from it.polimi.strategyviz.strategy2pta.pta import PTA, Location
-from it.polimi.strategyviz.strategy2pta.stratego_parser import parse_optimized_strategy
-from it.polimi.strategyviz.strategy2pta.tigaparser import parse_tiga_strategy, TigaStrategy
-from it.polimi.strategyviz.upp2pta.converter import parse_uppaal_model
-from it.polimi.strategyviz.viz_logging.logger import Logger
+from src.strategyviz.strategy2pta.pta import PTA, Location
+from src.strategyviz.strategy2pta.stratego_parser import parse_optimized_strategy
+from src.strategyviz.strategy2pta.tigaparser import parse_tiga_strategy, TigaStrategy
+from src.strategyviz.upp2pta.converter import parse_uppaal_model
+from src.strategyviz.viz_logging.logger import Logger
 
 config = configparser.ConfigParser()
 config.sections()
