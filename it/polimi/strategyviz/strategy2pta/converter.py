@@ -135,7 +135,7 @@ def convert():
     end_ts = time.time()
     LOGGER.msg("PTA extraction from optimized strategy took {:.2f}s.".format(end_ts - start_ts))
 
-    final_pta.equalities2intervals()
+    # final_pta.equalities2intervals()
     # final_pta.combine_edges()
     final_pta.plot()
 

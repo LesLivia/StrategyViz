@@ -210,7 +210,7 @@ class PTA:
     @staticmethod
     def get_interval(tup):
         # FIXME
-        T = 20
+        T = 10
         if tup[0] in ['h_dd', 'r_dd']:
             return int(tup[1]) - T / 2, int(tup[1]) + T / 2
         else:

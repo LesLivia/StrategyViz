@@ -47,6 +47,7 @@ def to_uppaal_model(pta: PTA):
         only_global = False
 
     # COPY EXISTING TEMPLATES
+    LOGGER.debug('Copying existing templates...')
     pta_local_content = ''
     for tplt in root.iter('template'):
         tplt_copy = cet.SubElement(new_root, 'template')
@@ -70,6 +71,7 @@ def to_uppaal_model(pta: PTA):
     new_declaration.text = pta.declarations
 
     # ADD LOCATIONS
+    LOGGER.debug('Adding locations...')
     init_id = ''
     ids = {}
     positions = {}
@@ -107,6 +109,7 @@ def to_uppaal_model(pta: PTA):
     new_init = cet.SubElement(new_template, 'init', {'ref': init_id})
 
     # ADD EDGES
+    LOGGER.debug('Adding edges...')
     for i, e in enumerate(pta.edges):
         new_id = 'id' + str(i + len(pta.locations) + len(pta.branchpoints))
         new_edge = cet.SubElement(new_template, 'transition', {'id': new_id, 'controllable': 'false'})
