@@ -21,9 +21,7 @@ class OptimizedState:
         for i, v in enumerate(statevars_values):
             if statevars[i] in location_names.keys():
                 curr_loc_str = location_names[statevars[i]][v]
-                # TODO: experimental, only keep the pta with controllable edges
-                if len(state_locs) <= 0:
-                    state_locs.append(NetLocation(statevars[i].split('.')[0], curr_loc_str))
+                state_locs.append(NetLocation(statevars[i].split('.')[0], curr_loc_str))
             else:
                 state_vars.append(StateVariable(statevars[i], v))
 
@@ -34,9 +32,10 @@ class OptimizedState:
 
 
 class Regressor:
-    def __init__(self, state: OptimizedState, best_actions: List[str]):
+    def __init__(self, state: OptimizedState, best_actions: List[str], weight: float):
         self.state = state
         self.best_actions = best_actions
+        self.payoff = weight
 
     @staticmethod
     def parse(key: str, d: Dict, statevars: List[str], location_names: Dict, actions: Dict[str, str]):
@@ -59,11 +58,11 @@ class Regressor:
                     weights[float(d['regressor'][a])].append(actions[a])
                 except KeyError:
                     weights[float(d['regressor'][a])] = [actions[a]]
-            # TODO: what does it mean when an action is not event part of the regressor?
+            # TODO: what does it mean when an action is not part of the regressor?
 
         best_weight = fun(weights.keys())
 
-        return Regressor(state, weights[best_weight])
+        return Regressor(state, weights[best_weight], best_weight)
 
     def __str__(self):
         return str(self.state)  # + '\n' + str(self.minimize) + '\n' + str(self.weights)
@@ -73,7 +72,7 @@ class Regressor:
 
 
 class OptimizedStrategy:
-    def __init__(self, name: str, regressors: Dict[str, List[str]]):
+    def __init__(self, name: str, regressors: List[Regressor]):
         self.name = name
         self.regressors = regressors
 

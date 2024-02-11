@@ -6,7 +6,7 @@ from graphviz import Digraph
 from tqdm import tqdm
 
 from src.strategyviz.viz_logging.logger import Logger
-from src.strategyviz.z3gen.z3constrgenerator import guards2singleconstr
+# from src.strategyviz.z3gen.z3constrgenerator import guards2singleconstr
 
 config = configparser.ConfigParser()
 config.sections()
@@ -240,28 +240,28 @@ class PTA:
     def combine_edges(self):
         LOGGER.info('Combining edges...')
         # TODO: needs refinement
-        already_processed = []
-        old_edges = self.edges.copy()
-        new_edges = []
-        for i, edge in tqdm(enumerate(self.edges)):
-            if i in already_processed:
-                continue
-            eq_edges = []
-            for j, edge_2 in enumerate(self.edges):
-                if i == j or j in already_processed:
-                    continue
-                same_start = edge.start.label == edge_2.start.label
-                same_end = edge.end.label == edge_2.end.label
-                same_sync = edge.sync == edge_2.sync
-                same_update = edge.update == edge_2.update
-                if same_start and same_end and same_sync and same_update:
-                    already_processed.append(j)
-                    eq_edges.append(edge_2)
-            if len(eq_edges) > 0:
-                guards = [e.guard for e in eq_edges + [edge]]
-                new_guard = guards2singleconstr(guards)
-                LOGGER.debug(new_guard)
-                new_edges.append(Edge(new_guard, edge.sync, edge.update, edge.start,
-                                      edge.end, edge.weight, edge.controllable))
-        new_edges += [e for i, e in enumerate(old_edges) if i not in already_processed]
-        self.edges = new_edges
+        # already_processed = []
+        # old_edges = self.edges.copy()
+        # new_edges = []
+        # for i, edge in tqdm(enumerate(self.edges)):
+        #     if i in already_processed:
+        #         continue
+        #     eq_edges = []
+        #     for j, edge_2 in enumerate(self.edges):
+        #         if i == j or j in already_processed:
+        #             continue
+        #         same_start = edge.start.label == edge_2.start.label
+        #         same_end = edge.end.label == edge_2.end.label
+        #         same_sync = edge.sync == edge_2.sync
+        #         same_update = edge.update == edge_2.update
+        #         if same_start and same_end and same_sync and same_update:
+        #             already_processed.append(j)
+        #             eq_edges.append(edge_2)
+        #     if len(eq_edges) > 0:
+        #         guards = [e.guard for e in eq_edges + [edge]]
+        #         new_guard = guards2singleconstr(guards)
+        #         LOGGER.debug(new_guard)
+        #         new_edges.append(Edge(new_guard, edge.sync, edge.update, edge.start,
+        #                               edge.end, edge.weight, edge.controllable))
+        # new_edges += [e for i, e in enumerate(old_edges) if i not in already_processed]
+        # self.edges = new_edges
