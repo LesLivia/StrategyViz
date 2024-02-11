@@ -1,8 +1,6 @@
 import json
 from typing import List
 
-from tqdm import tqdm
-
 from src.strategyviz.strategy2pta.opt_strategy import OptimizedStrategy, Regressor
 from src.strategyviz.viz_logging.logger import Logger
 
@@ -18,7 +16,7 @@ def parse_optimized_strategy(name: str, data: str):
     locationnames = json_content['locationnames']
     actions = json_content['actions']
 
-    for state_str in tqdm(regressors_dict):
+    for state_str in regressors_dict:
         new_regressor = Regressor.parse(state_str, regressors_dict[state_str], state_vars, locationnames, actions)
         regressors.append(new_regressor)
 
