@@ -62,7 +62,7 @@ class Regressor:
 
         best_weight = fun(weights.keys())
 
-        return Regressor(state, weights[best_weight], best_weight)
+        return [Regressor(state, weights[w], w) for w in weights]
 
     def __str__(self):
         return str(self.state)  # + '\n' + str(self.minimize) + '\n' + str(self.weights)

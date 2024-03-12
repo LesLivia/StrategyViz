@@ -17,8 +17,8 @@ def parse_optimized_strategy(name: str, data: str):
     actions = json_content['actions']
 
     for state_str in regressors_dict:
-        new_regressor = Regressor.parse(state_str, regressors_dict[state_str], state_vars, locationnames, actions)
-        regressors.append(new_regressor)
+        new_regressors = Regressor.parse(state_str, regressors_dict[state_str], state_vars, locationnames, actions)
+        regressors.extend(new_regressors)
 
     LOGGER.info('Found {} regressors.'.format(len(regressors)))
 
